@@ -1,0 +1,38 @@
+#Fichier de traduction pour le français
+# v0.1, 100.00%
+Français
+Spectre
+Pas de paramètres pour le moment
+Fonctionnalité non codée pour le moment
+Echec de l'enregistrement de la session
+Erreur. Fichier de langue invalide
+Erreur. Fichier non trouvé.
+OK
+Erreur
+Choisir un dossier
+IBA data evaluation
+Ouvrir un fichier .lst
+Ouvrir un fichier format XYE
+Sauvegarder la session SpJ
+Restaurer fichiers/sessions
+Donnez des noms svp (autres que Name)
+Donnez des titres différents pour chaque image svp
+Le caractère '_' n'est pas autorisé
+Mettez des chiffres dans les champs min et max
+Min
+Max
+Nom
+Sauv Gupix
+Sauv
+Log/Lin
+Génerer images
+Plus...
+NA
+Energies
+Nbre évènements
+Echec de la sauvegarde
+Veuillez faire une sélection
+Echec de la sauvegarde
+Calculer le spectre
+Tout sauvegarder
+Spectre calculé

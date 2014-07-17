@@ -1,0 +1,141 @@
+Installation report for the LUT update performed on: 13-6-2014 at 11.44.59
+ 
+The following 122 new LUTs has been installed into the "E:\Master-2014\NetBeansIJSupJ-masterv0.5\luts\"repertory of ImageJ:
+
+
+---------------
+Distribution Luts:
+---------------
+
+Lut name: 16_colors.lut
+Lut name: 5_ramps.lut
+Lut name: 6_shades.lut
+Lut name: Cyan Hot.lut
+Lut name: Green Fire Blue.lut
+Lut name: HiLo.lut
+Lut name: ICA.lut
+Lut name: ICA2.lut
+Lut name: ICA3.lut
+Lut name: Magenta Hot.lut
+Lut name: Orange Hot.lut
+Lut name: Rainbow RGB.lut
+Lut name: Red Hot.lut
+Lut name: Yellow Hot.lut
+Lut name: blue_orange_icb.lut
+Lut name: brgbcmyw.lut
+Lut name: cool.lut
+Lut name: edges.lut
+Lut name: gem.lut
+Lut name: phase.lut
+Lut name: royal.lut
+Lut name: sepia.lut
+Lut name: smart.lut
+Lut name: thal.lut
+Lut name: thallium.lut
+Lut name: unionjack.lut
+
+------------------
+Main Collection Luts:
+------------------
+
+Lut name: 000-gray.lut
+Lut name: 001-fire.lut
+Lut name: 002-spectrum.lut
+Lut name: 003-ice.lut
+Lut name: 005-random.lut
+Lut name: 16_equal.lut
+Lut name: 16_ramps.lut
+Lut name: 20_colors.lut
+Lut name: 32_colors.lut
+Lut name: 6_reserved_colors.lut
+Lut name: Blue Hot.lut
+Lut name: Green Hot.lut
+Lut name: GreenFire.lut
+Lut name: NIH-Image6ExtraColors.lut
+Lut name: amber.lut
+Lut name: auxctq.lut
+Lut name: blue_orange.lut
+Lut name: brain.lut
+Lut name: brown.lut
+Lut name: cells.lut
+Lut name: cequal.lut
+Lut name: cmy-cyan.lut
+Lut name: cmy-magneta.lut
+Lut name: cmy-yellow.lut
+Lut name: cmy.lut
+Lut name: cold.lut
+Lut name: cti_ras.lut
+Lut name: ether.lut
+Lut name: fire-ncsa.lut
+Lut name: gem-16.lut
+Lut name: gem-256.lut
+Lut name: gold.lut
+Lut name: gyr_centre.lut
+Lut name: haze.lut
+Lut name: heart.lut
+Lut name: hsatl1.lut
+Lut name: hsatl2.lut
+Lut name: hsatv1.lut
+Lut name: hue.lut
+Lut name: hue_ramps_08.lut
+Lut name: hue_ramps_16.lut
+Lut name: iman.lut
+Lut name: invert_gray.lut
+Lut name: isocontour.lut
+Lut name: log_down.lut
+Lut name: log_up.lut
+Lut name: mixed.lut
+Lut name: nih-image-fire1.lut
+Lut name: nih-image-fire2.lut
+Lut name: pastel.lut
+Lut name: red-blue.lut
+Lut name: rgb-blue.lut
+Lut name: rgb-green.lut
+Lut name: rgb-red.lut
+Lut name: siemens.lut
+Lut name: split_blackblue_redwhite.lut
+Lut name: split_blackwhite_ge.lut
+Lut name: split_blackwhite_warmmetal.lut
+Lut name: split_bluered_warmmetal.lut
+Lut name: system_lut.lut
+Lut name: thal_16.lut
+Lut name: topography.lut
+Lut name: vivid.lut
+Lut name: warhol.lut
+
+----------
+Other Luts:
+----------
+
+Lut name: 10_Percent.lut
+Lut name: 16_color-bis.lut
+Lut name: 5percent.lut
+Lut name: 8color.lut
+Lut name: Blue-Orange-bis.lut
+Lut name: Blue_Green.lut
+Lut name: Blue_Green_Red.lut
+Lut name: Blue_Red.lut
+Lut name: Blue_Red_Yellow.lut
+Lut name: Brown_Body.lut
+Lut name: Ceretec.lut
+Lut name: Cyclic.lut
+Lut name: Hot_Iron.lut
+Lut name: Ice.lut
+Lut name: MMC.lut
+Lut name: Rainbow.lut
+Lut name: S_Pet.lut
+Lut name: Sopha.lut
+Lut name: StarsAndStripes.lut
+Lut name: Thermal-SP.lut
+Lut name: Thermal.lut
+Lut name: White_Blue_Green_Red.lut
+Lut name: Yellow_WFG.lut
+Lut name: blue-bis.lut
+Lut name: hotter.lut
+Lut name: linear.lut
+Lut name: prism.lut
+Lut name: step10.lut
+Lut name: step20.lut
+Lut name: step4.lut
+Lut name: step5.lut
+Lut name: warm.lut

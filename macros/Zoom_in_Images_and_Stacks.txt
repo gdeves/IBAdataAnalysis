@@ -1,0 +1,136 @@
+// Zoom in Images and Stacks
+
+// Description : make a zoomed inset from a selection in an image or a stack.
+
+// Instructions:
+// - make a rectangular selection of the area to zoom
+// - choose the color of the rectangles labelling using the color picker 
+// - click on the "Zoom in Images and Movies" tool icone
+// - choose the settings in the box
+// - chose the destination for the zoomed area by moving the "rectangle cursor" (navigate in the stack using the
+// arrows of the keyboard).
+// - click to apply the choice
+// 
+// 
+// Author: Gilles Carpentier, Faculte des Sciences et
+// Technologie,  Universite Paris Est Creteil Val de Marne, France
+// More information on the "image.bio.methods" web site at the http://image.bio.methods.free.fr/ImageJ/
+
+var zoomValue=2, suf="-zoom", red=0, green=0, blue=0, surOri=1, surZoom=2,click=1;
+var showDestination=1, showInitialSelection=1, FSlice=1, TSlice=1;
+
+macro "Zoom in Images and Stacks Action Tool - C222Da9CfffD00D01D02D03D0aD0bD0cD0dD0eD0fD10D11D12D1bD1cD1dD1eD1fD20D21D2cD2dD2eD2fD30D31D3cD3dD3eD3fD40D4dD4eD4fD50D5dD5eD5fD60D6dD6eD6fD70D7dD7eD7fD80D81D8cD8dD8eD8fD90D91D9cD9dD9eD9fDa0Da1Da2DabDacDadDaeDafDb0Db1Db2Db3Db4DbcDbdDbeDbfDc0Dc1Dc2Dc3Dc4Dc5Dc6Dc7Dc8DccDcdDceDcfDd0Dd1Dd2Dd3Dd4Dd5Dd6Dd7Dd8Dd9DdcDddDdeDdfDe0De1De2De3De4De5De6De7De8De9DedDeeDefDf0Df1Df2Df3Df4Df5Df6Df7Df8Df9DfaDfeDffCcddD37D47CbbbD3bD5bD82CeeeD1aD22D2bD4cD7cDb6C999D33CdeeD57D88D94CcccD83Da4CefeD09D5aC888D14CdddDa7CcccD08Dc9DcbCeeeD04D41D71D92D9bDa3Db5DeaDfdCaaaD07CdeeD58D66D67D74D76D78D7aD85D87D89CcccDb8CeffD84D98C666DbaCcddD39D48D64CbbbD05D93DecCeeeD59D68D97C9aaD16D24CdeeD86CcdcD29D36D3aD53CeefD69C898D52CdedD49D4aCbccD45D46CabaD17D18CddcD6cCfffDbbC444DfcCcddD27D28D38D54D63D73CbbbD8aCaaaD06D8bDdaCdeeD65D95D96CbdcD44C888Da8DfbCdddD51D61Da6Db7CbccD25D34D35CaaaD4bDaaCcddD26C777D23D9aDdbCbcbD43CdeeD77D79CeffD75C999D62CabbD19D2aD6bCdddD13D5cDa5CeffD6aC322DcaC999D32D72C888D42CaaaD99CcddD55D56C666Db9C899D15C555DebC999D7b" {
+	requires("1.44j");
+	setBatchMode (true);
+	if (selectionType() != 0) exit ("This tool requires a rectangular selection");
+	getDimensions(width, height, channels, slices, frames);
+	getSelectionBounds(x, y, widthSel, heightSel);	
+	movieID = getImageID(); movieName = getTitle();
+	getCurentColors (); currentSlice=getSliceNumber(); FSlice=currentSlice; //TSlice=slices;
+	run("Add Selection...", "stroke=green width=1 fill=none new");
+	run("Select None");
+	ok=-1;  
+	settings (ok,widthSel, width, heightSel, height, slices, currentSlice);
+	x2=-1; y2=-1; z2=-1; flags2=-1; xzo=0; yzo=0; click=0;
+	leftButton=16;
+	setColor('red');
+	xx = zoomValue * widthSel; yy= zoomValue * heightSel;
+	Overlay.drawRect(xzo, yzo, xx, yy);
+	while (click != 1) {      	
+		getCursorLoc(xzo, yzo, z, flags);
+		if (xzo!=x2 || yzo!=y2 || z!=z2 || flags!=flags2) {
+			Overlay.removeSelection(1);
+			if (flags&leftButton!=0) click = 1;
+			setLineWidth(surZoom);
+			Overlay.drawRect(xzo, yzo, xx, yy);
+			Overlay.show;
+		}
+		x2=xzo; y2=yzo; z2=z; flags2=flags;
+		wait(5);
+	}
+	sufix= ".";
+	if (lastIndexOf(movieName, sufix) > 1) {
+		workingmovie = substring (movieName,0,lastIndexOf(movieName, sufix));	
+	} else {workingmovie= movieName;}	
+	movieDir = getDirectory ("temp");
+	ImaStack = movieDir+ workingmovie +"-zoom"+File.separator;
+	File.makeDirectory(ImaStack);
+	if (!File.exists(ImaStack)) exit("Unable to create directory, something wrong in the ImageJ folder");	
+	progress=0;setPasteMode("Copy");
+	for (i=1;i<=slices;i++) {
+		selectImage (movieID);
+		setSlice (i);
+		numero=pad(i);
+		newName=numero + "-"+  workingmovie;
+		tempSlice="temp_zoom";
+		run("Select All");
+		run("Duplicate...", "title=["+newName+"]");
+		tempid=getImageID();
+		if (i >= FSlice && i <= TSlice) {
+			makeRectangle (x, y, widthSel, heightSel);
+			run("Scale...", "x="+ zoomValue +" y= "+zoomValue+"  width="+xx+" height="+yy+" interpolation=Bicubic average create title="+tempSlice+"");
+			run("Select All");
+			run("Copy");
+			close ();
+			selectImage (tempid);
+			makeRectangle(xzo, yzo,  xx,  yy);
+			run("Paste");run("Select None");
+			setColor(red, green, blue);
+			if (showDestination ==1) {setLineWidth(surZoom);drawRect(xzo, yzo,  xx,  yy);}
+			if (showInitialSelection ==1) {setLineWidth(surOri);drawRect(x, y, widthSel, heightSel);}
+			setLineWidth(1);
+		}
+		save(ImaStack+ newName+".tiff");
+		close ();
+		progress=i/slices;
+		showProgress(progress);	
+	}
+	selectImage (movieID); run("Select None");
+	setBatchMode("exit and display");
+	run("Image Sequence...", "open=["+ImaStack+"00000.tif] use");
+}
+
+// from http://rsb.info.nih.gov/ij/macros/Process_Virtual_Stack.txt  Author: Wayne Rasband
+function pad(n) {
+      str = toString(n);
+      while (lengthOf(str)<5) str = "0" + str;
+      return str;
+}
+
+function getCurentColors () {
+	fg = getValue("foreground.color");
+	red=( fg>>16)&0xff;
+	green=( fg>>8)&0xff;
+	blue= fg&0xff;
+}
+
+function settings (ok, widthSel, width, heightSel, height, slices, currentSlice) {
+	while (ok != 1) {
+		Dialog.create("Choose Settings");
+		if (ok == 0) Dialog.addMessage ("! This zoom factor is not compatible with this selection");
+		Dialog.addNumber("Zoom factor:", zoomValue, 1, 3, "");
+		Dialog.addCheckbox("Outline source", showInitialSelection);
+		Dialog.addNumber("Line width:", surOri, 0, 1, "");
+		Dialog.addCheckbox("Outline destination", showDestination);
+		Dialog.addNumber("Line width:", surZoom, 0, 1, "");
+		if (slices > 1) {
+		    Dialog.addMessage("");
+			fromSlice=1; toSlice=slices;
+			Dialog.addNumber("First slice:", fromSlice, 0, 4, "");
+			Dialog.addNumber("Last slice:", toSlice, 0, 4, "");
+		}		
+		Dialog.show();
+		zoomValue = Dialog.getNumber();
+		showInitialSelection = Dialog.getCheckbox();
+		surOri= Dialog.getNumber();
+		showDestination = Dialog.getCheckbox();
+		surZoom= Dialog.getNumber();
+		if (slices > 1) {
+			fromSlice= Dialog.getNumber(); FSlice=parseFloat (fromSlice);
+			toSlice= Dialog.getNumber(); TSlice=parseFloat (toSlice);
+		}
+		if (zoomValue < 1) zoomValue =1;
+		if ((widthSel * zoomValue) >= width || (heightSel * zoomValue) >= height) {ok=0;} else {ok=1;};
+	}
+}
+

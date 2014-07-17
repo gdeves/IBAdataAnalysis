@@ -1,0 +1,6 @@
+To run ImageJ with all its plugins :
+  - under WINDOWS : you can run the .bat or the .exe file in this directory
+  - under Mac or Linux  : open a terminal and change your directory to the one where you put imageJ and run "bash run" in the terminal
+
+  In the directory plugins, the files .java under the SupavisioJ directory, the lib directory and the file Supavisio_J.java are under the GPL v3.0 LICENCE
+  (For more details see the LICENCE and COPYING files).  

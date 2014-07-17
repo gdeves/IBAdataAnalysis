@@ -1,0 +1,33 @@
+/*
+ * Created on 30.11.2005
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package patternMatching;
+
+import ij.ImagePlus;
+
+/**
+ * @author Volker
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+public abstract class FeatureCalculator {
+	ImagePlus inputImage;
+	FeatureVector result;
+	
+	public void setInputImage(ImagePlus image) {
+		this.inputImage = image;
+	}
+
+	/**
+	 * @return Returns the result.
+	 */
+	public FeatureVector getResult() {
+		return result;
+	}
+	
+	abstract public void run();
+}
