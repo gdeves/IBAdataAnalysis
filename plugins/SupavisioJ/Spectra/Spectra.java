@@ -406,7 +406,7 @@ public class Spectra {
             resX=ips.readInt();
             resY=ips.readInt();
             adc = new ADC();
-            adc.restoreXYEListFile(ips);
+            adc.open(ips);
             int index=path.lastIndexOf("/")+1;
             if (index==0)
                 index=path.lastIndexOf("\\")+1;

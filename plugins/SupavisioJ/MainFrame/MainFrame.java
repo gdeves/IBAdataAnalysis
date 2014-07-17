@@ -2,15 +2,17 @@ package SupavisioJ.MainFrame;
 
 import SupavisioJ.ConvertListFiles.ADC.ADC;
 import SupavisioJ.ConvertListFiles.FrameC.FrameC;
-import SupavisioJ.DataFileXYEList.DataFileXYEList;
 import SupavisioJ.FrameConfigSave.FrameConfigSave;
 import SupavisioJ.FrameConfigLang.FrameConfigLang;
 import SupavisioJ.ImageGenerated.ImageGenerated;
 import SupavisioJ.Spectra.Spectra;
 import ij.IJ;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -211,11 +213,19 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonParamLstActionPerformed
 
     private void jButtonOpenXYEListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenXYEListActionPerformed
-        String path=selectFile();
-        DataFileXYEList fileXYE=new DataFileXYEList(path);
-        ADC adcXYE = fileXYE.open(); 
-        if ( adcXYE!=null && adcXYE.getNEvents()>1 && (adcXYE.getlastEvent()[0]!=0 && adcXYE.getlastEvent()[1]!=0) ){//check if a correct file has been open
-            Spectra spectraXYE= new Spectra(adcXYE,fileXYE.getName());
+      
+      String path=selectFile();
+      DataInputStream ips=null;
+      try{
+	ips=new DataInputStream(new BufferedInputStream(new FileInputStream(path))); 
+         }
+      catch (FileNotFoundException e){
+          IJ.log("File not found");
+      }
+        ADC adc=new ADC();
+        adc.open(ips);
+        if ( adc!=null && adc.getNEvents()>1 && (adc.getlastEvent()[0]!=0 && adc.getlastEvent()[1]!=0) ){//check if a correct file has been open
+            Spectra spectraXYE= new Spectra(adc,path);
             if(spectraXYE.getEnergies().length>1){//check if a correct file has been open
                 spectraXYE.setParentWindow(this);
                 spectraXYE.plotSpectra(nameOfApplication, (String) tr("Spectra")+" "+spectraXYE.getFileName()).showVisible();

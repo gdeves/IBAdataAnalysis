@@ -328,10 +328,10 @@ public class ADC{
     }
     
     /**
-     * Restore the events(x,y,E) in the ADC if they was saved with saveXYEListFile
+     * Open a sorted events list
      * @param ips stream to be read 
      */
-    public void restoreXYEListFile(DataInputStream ips){
+    public void open(DataInputStream ips){
         try{
            while(true){
              int[] evt = new int[3];
@@ -343,9 +343,27 @@ public class ADC{
          }
          catch (IOException e){}
     }
-    
     /**
-     * Method to convert short integer to little endian as required for old supavisio reading
+     * Open a sorted events list
+     * @param ips stream to be read 
+     */
+    public void openSupaVisioTypeEventList(DataInputStream ips){
+        try{
+            ips.readShort();
+            ips.readShort();
+            ips.readShort();
+           while(true){
+             int[] evt = new int[3];
+             evt[0]=LittleEndian(ips.readShort());
+             evt[1]=LittleEndian(ips.readShort());
+             evt[2]=LittleEndian((short)ips.readInt());
+             addEvent(evt);
+           }
+         }
+         catch (IOException e){}
+    }
+    /**
+     * Converts short integer to little endian as required for Supavisio reading
      * @param v integer to be converted
      * @returns v as little endian
      */

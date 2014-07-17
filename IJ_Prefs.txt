@@ -1,5 +1,5 @@
 #ImageJ 1.45s Preferences
-#Wed Jul 16 11:11:35 CEST 2014
+#Thu Jul 17 10:38:39 CEST 2014
 .bioformats.record=false
 fps=7.0
 new.slices=1
