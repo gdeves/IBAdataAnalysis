@@ -348,6 +348,7 @@ public class ADC{
      * @param ips stream to be read 
      */
     public void openSupaVisioTypeEventList(DataInputStream ips){
+        //for compatibility only
         try{
             ips.readShort();
             ips.readShort();
