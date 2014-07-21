@@ -15,7 +15,7 @@ public class ADC{
     private ArrayList<ArrayList<Integer>> map = new ArrayList<ArrayList<Integer>>();
     private ArrayList<Integer> median = new ArrayList<Integer>();
     private ArrayList<Integer> activationPeriods = new ArrayList<Integer>();
-
+    private String path;
     private Integer sizeMapX=1024;
     private Integer sizeMapY=1024;
 
@@ -36,7 +36,11 @@ public class ADC{
         }
     }
     
-    //getter methods
+    //getter
+    
+    public String getPath(){
+        return this.path;
+    }
     public int[] getEvent(int position){
         return eventList.get(position);
     }
@@ -355,13 +359,14 @@ public class ADC{
             ips.readShort();
            while(true){
              int[] evt = new int[3];
-             evt[0]=LittleEndian(ips.readShort());
-             evt[1]=LittleEndian(ips.readShort());
-             evt[2]=LittleEndian((short)ips.readInt());
+             evt[0]=LittleEndian((short)ips.readShort());
+             evt[1]=LittleEndian((short)ips.readShort());
+             evt[2]=LittleEndian((short)ips.readShort());
              addEvent(evt);
            }
          }
          catch (IOException e){}
+        java.lang.System.gc();
     }
     /**
      * Converts short integer to little endian as required for Supavisio reading

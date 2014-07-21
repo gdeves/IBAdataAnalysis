@@ -223,7 +223,16 @@ public class MainFrame extends javax.swing.JFrame {
           IJ.log("File not found");
       }
         ADC adc=new ADC();
-        adc.open(ips);
+        IJ.log("file: "+ path);
+        if (path.substring(path.length()-1).equals("2")){
+            IJ.log("now opening...");
+            adc.open(ips);
+        }
+        else {
+            IJ.log("...is SupaVisio Type listfile");
+            adc.openSupaVisioTypeEventList(ips);
+        }
+
         if ( adc!=null && adc.getNEvents()>1 && (adc.getlastEvent()[0]!=0 && adc.getlastEvent()[1]!=0) ){//check if a correct file has been open
             Spectra spectraXYE= new Spectra(adc,path);
             if(spectraXYE.getEnergies().length>1){//check if a correct file has been open
@@ -231,6 +240,7 @@ public class MainFrame extends javax.swing.JFrame {
                 spectraXYE.plotSpectra(nameOfApplication, (String) tr("Spectra")+" "+spectraXYE.getFileName()).showVisible();
             }
         }
+        java.lang.System.gc();
     }//GEN-LAST:event_jButtonOpenXYEListActionPerformed
 
     private void jButtonParamPIXEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonParamPIXEActionPerformed

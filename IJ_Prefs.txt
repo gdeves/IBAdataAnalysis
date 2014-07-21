@@ -1,5 +1,5 @@
 #ImageJ 1.45s Preferences
-#Thu Jul 17 10:38:39 CEST 2014
+#Fri Jul 18 11:05:18 CEST 2014
 .bioformats.record=false
 fps=7.0
 new.slices=1
@@ -30,7 +30,7 @@ raw.height=255
 .zproject.method=0
 .bioformats.swapDimensions=false
 .manager.loc=1323,579
-.log.loc=156,618
+.log.loc=195,502
 showcolor=\#00FFFF
 prefs.options=20480
 measurements=2167

@@ -91,6 +91,10 @@
                         </arity>
                     </context>
                 </action>
+                <action name="profile">
+                    <script>nbproject/ide-targets.xml</script>
+                    <target>profile-nb</target>
+                </action>
             </ide-actions>
             <view>
                 <items>
@@ -125,6 +129,7 @@
                         <label>MyDebug</label>
                         <target>myDebug</target>
                     </action>
+                    <ide-action name="profile"/>
                 </context-menu>
             </view>
             <subprojects/>
