@@ -3,7 +3,6 @@ package IBA_J.resources.lib;
 import IBA_J.GeneratedMap.GeneratedMap;
 import IBA_J.MainFrame.MainFrame;
 import IBA_J.Spectra.Spectra;
-import IBA_J.resources.lib.CheckBoxListenerSp;
 import IBA_J.Prefs.PrefsManager;
 import ij.*;
 
@@ -26,7 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -153,7 +151,8 @@ public class XYPlotSp extends JFrame {
      * @see CheckBoxListenerSp
      */
     private void initComponents(int nROI) {
-        int nAddedField=1;
+        
+        int nAddedField=vectButtonsSupp.size()+1;
         checkBoxListener = new CheckBoxListenerSp(this);
         int nbFieldsToAdd=nROI-vectButtonsSupp.size();
         if (nbFieldsToAdd>0){
@@ -178,6 +177,7 @@ public class XYPlotSp extends JFrame {
                 }
             }
         }
+        //setSelectedCheckBox();
         jButtonPlus = new JButton();
         jButtonPlus.setText(tr("+ ROI ..."));
         
@@ -223,7 +223,7 @@ public class XYPlotSp extends JFrame {
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         
-        //Layout horizontal
+        // horizontal Layout
         ParallelGroup paralGroupHor=layout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup grpChartPanel=layout.createSequentialGroup();
         grpChartPanel.addComponent(chartPanel);
@@ -260,7 +260,7 @@ public class XYPlotSp extends JFrame {
                 JTextField textFieldCurrentMax=(JTextField) tablJComp[3];
                 grp1.addComponent(checkBoxCurrent, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE);
                 grp1.addPreferredGap(ComponentPlacement.RELATED);
-                grp1.addComponent(textFieldCurrentName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
+                grp1.addComponent(textFieldCurrentName, 20, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
                 grp1.addPreferredGap(ComponentPlacement.RELATED);
                 grp1.addComponent(textFieldCurrentMin, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE);
                 grp1.addPreferredGap(ComponentPlacement.RELATED);
@@ -300,7 +300,7 @@ public class XYPlotSp extends JFrame {
         paralGroupHor.addGroup(GroupLayout.Alignment.TRAILING, grpButton);
         
         
-        //Layout vertical 
+        //vertical Layout  
         ParallelGroup paralGroup2Vert=layout.createParallelGroup(GroupLayout.Alignment.LEADING);
         SequentialGroup grpAll = layout.createSequentialGroup();
         ParallelGroup gpChart = layout.createParallelGroup(GroupLayout.Alignment.BASELINE);
@@ -377,7 +377,7 @@ public class XYPlotSp extends JFrame {
     }
     private void addField(int ROI){
         
-        PrefsManager Prefs=new PrefsManager();
+        PrefsManager prefs=new PrefsManager();
         JComponent[] buttonsToAdd= new JComponent[4];
         buttonsToAdd[0] = new JCheckBox();
         buttonsToAdd[1] = new JTextField();
@@ -385,20 +385,23 @@ public class XYPlotSp extends JFrame {
         buttonsToAdd[3] = new JTextField();
         vectButtonsSupp.add(buttonsToAdd);
         JCheckBox checkBoxCurrent = (JCheckBox) buttonsToAdd[0];
+        
+        checkBoxCurrent.setSelected(prefs.getROIState(ROI));
+        
+        
         JTextField textFieldCurrentName= (JTextField) buttonsToAdd[1];
         JTextField textFieldCurrentMin= (JTextField) buttonsToAdd[2];
         JTextField textFieldCurrentMax=(JTextField) buttonsToAdd[3];
         checkBoxCurrent.setText(tr("NA"));
-        IJ.log("IBA.ROI"+String.valueOf(ROI)+".name");
-        textFieldCurrentName.setText(Prefs.ijGetValue("IBA.roi"+String.valueOf(ROI)+".name","no_name"));
-        textFieldCurrentMin.setText(Prefs.ijGetValue("IBA.roi"+String.valueOf(ROI)+".min",Integer.toString(1)));
-        textFieldCurrentMax.setText(Prefs.ijGetValue("IBA.roi"+String.valueOf(ROI)+".max",Integer.toString(4095)));
+        textFieldCurrentName.setText(prefs.ijGetValue("IBA.roi"+String.valueOf(ROI)+".name","?"));
+        textFieldCurrentMin.setText(prefs.ijGetValue("IBA.roi"+String.valueOf(ROI)+".min",Integer.toString(1)));
+        textFieldCurrentMax.setText(prefs.ijGetValue("IBA.roi"+String.valueOf(ROI)+".max",Integer.toString(4095)));
         checkBoxCurrent.addItemListener(checkBoxListener);
         textFieldCurrentMin.getDocument().addDocumentListener(checkBoxListener);
         textFieldCurrentMax.getDocument().addDocumentListener(checkBoxListener);
     }
     private void jButtonMoreActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        initComponents(vectButtonsSupp.size()+3);
+        initComponents(vectButtonsSupp.size()+1);
     }   
     
     private void jButtonGenImgActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -434,19 +437,38 @@ public class XYPlotSp extends JFrame {
     }
     
     
-    public ArrayList<JCheckBox> getCheckBoxSelected(){
-        ArrayList<JCheckBox> tabCheckBoxSelected = new ArrayList<>();
+    public ArrayList<JCheckBox> getSelectedCheckBox(){
+        ArrayList<JCheckBox> selectedCheckboxes = new ArrayList<>();
         for (Object vectButtonsSupp1 : vectButtonsSupp) {
-            JComponent[] tabJComp = (JComponent[]) vectButtonsSupp1;
-            JCheckBox checkBoxCurrent = (JCheckBox) tabJComp[0];
-            if(checkBoxCurrent.isSelected()){
-                tabCheckBoxSelected.add(checkBoxCurrent);
+            JComponent[] jComponentTable;
+            jComponentTable = (JComponent[]) vectButtonsSupp1;
+            JCheckBox currentCheckbox = (JCheckBox) jComponentTable[0];
+            if(currentCheckbox.isSelected()){
+                selectedCheckboxes.add(currentCheckbox);
             }
         }
-        return tabCheckBoxSelected;
+        return selectedCheckboxes;
     }
+        public void setSelectedCheckBox(){
+        
+        PrefsManager prefs=new PrefsManager();    
+        
+        int i=1;
+        for (Object vectButtonsSupp1 : vectButtonsSupp) {
+            JComponent[] jComponentTable;
+            jComponentTable = (JComponent[]) vectButtonsSupp1;
+            JCheckBox currentCheckbox = (JCheckBox) jComponentTable[0];
+            boolean [] states=prefs.getROIStates();
+            currentCheckbox.setSelected(states[i]);
+            i+=1;
+            
+            
+        }
+        
+    }
+ 
     
-    public JCheckBox getLastCheckBoxActivated(){
+    public JCheckBox getLastActivatedCheckBox(){
         return checkBoxListener.getLastCheckBoxActivated();
     }
     

@@ -46,6 +46,12 @@ public class PrefsManager {
   public void ijPrefsSaveDirectory(String value){
       Prefs.set("IBA.LAST_USED_DIR",value);
   }
+  public void ijPrefsSaveStates(boolean[] states){
+      int nROI=states.length;
+      for (int i=0;i<nROI;i++){
+          ijPrefsSaveValue("IBA.roi"+String.valueOf(i+1)+".isActive", states[i]);
+      }
+  }
   
   
   //Getter
@@ -62,15 +68,29 @@ public class PrefsManager {
       return prefs.get("LAST_USED_DIR", System.getProperty("user.dir"));
   }
   public int ijGetIntValue(String key, int def){
-      return Prefs.getInt(key,def);
+      return ijPrefs.getInt(key,def);
   }
   public boolean ijGetBoolValue(String key, boolean def){
-      return Prefs.getBoolean(key,def);
+      return Boolean.valueOf(ijPrefs.getBoolean(key,def));
   }
   public String ijGetValue(String key, String def){
-      return Prefs.get(key,def);
+      return ijPrefs.get(key,def);
   }
   public String ijGetLastUsedDirectory(){
-      return Prefs.get("IBA.LAST_USED_DIR", System.getProperty("user.dir"));
+      return ijPrefs.get("IBA.LAST_USED_DIR", System.getProperty("user.dir"));
+  }
+  public boolean getROIState(int roi){
+      return ijGetValue("IBA.roi"+String.valueOf(roi)+".isActive","").equals("true");
+  }
+  public boolean[] getROIStates (){
+      int nROI=ijGetIntValue("IBA.nROI",0);
+      boolean [] activeROIs=new boolean[nROI];
+      for (int i=0;i<nROI;i++){
+        activeROIs[i]=ijGetBoolValue("IBA.roi"+String.valueOf(i)+".isActive",false);  
+      }
+      return activeROIs;
+  }
+  public int getNroi(){
+      return ijGetIntValue("IBA.nROI",0);
   }
 }

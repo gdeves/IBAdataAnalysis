@@ -45,7 +45,7 @@ public class CheckBoxListenerSp implements ItemListener,DocumentListener{
    public boolean isNotTaken(int r, int g,int b, int numberOfCall){
         //checks if the generated color is available to be used as marker
         if (  g+b>(70*r/100) ) { //to avoid the red color (similar to graph color)
-            if(colorList.size()==0)
+            if(colorList.isEmpty())
                 return true;
             //checks if the color is not already taken (or close to it)
             //chooses a low treshold if numberOfCall is high
@@ -140,7 +140,7 @@ public class CheckBoxListenerSp implements ItemListener,DocumentListener{
         XYPlot XYPlotOfChart = (XYPlot) chart.getPlot();
         //before remove : check if the vertical line is not the same for an other checkbox
         //in this case the position is also taken in another checkbox selected
-        ArrayList<JCheckBox> checkBoxsSelected = sourceXYPlotSp.getCheckBoxSelected();
+        ArrayList<JCheckBox> checkBoxsSelected = sourceXYPlotSp.getSelectedCheckBox();
         boolean isPresent = false;
         int indexIsPresent=-1;
         if (checkBoxsSelected.size()>0){//so other box are selected
@@ -178,65 +178,69 @@ public class CheckBoxListenerSp implements ItemListener,DocumentListener{
     }
     /**
      * This method is called each time that a checkbox is selected/unselected 
+     * @param e
      */
+     @Override
     public void itemStateChanged(ItemEvent e) {
         update(e.getSource());
     }
         
     public void update(Object objectActivated){
         Vector vectButtons = sourceXYPlotSp.getVectButtonsSupp();
-        for (int i=0;i<vectButtons.size();i++){
-            JComponent[] tabJCompToCheck = (JComponent[]) vectButtons.get(i);
-            JCheckBox checkBoxCurrent = (JCheckBox) tabJCompToCheck[0];
-            if(objectActivated==checkBoxCurrent){
-                if(checkBoxCurrent.isSelected())
-                    lastCheckBoxActivated=checkBoxCurrent;
-                //first reset : check up; if min/max has been changed, markers' colors need to be rechecked.
-                // this checkbox = one color so it checks if markers of this color remain, they have to be removed.
-                int indexOfCheckBox = checkBoxList.indexOf(checkBoxCurrent);
-                if (indexOfCheckBox!=-1){
-                    int[] colorRGBOfCheckBox=colorList.get(indexOfCheckBox);
-                    int r=colorRGBOfCheckBox[0];
-                    int g=colorRGBOfCheckBox[1];
-                    int b=colorRGBOfCheckBox[2];
-                    ArrayList<Integer> valToRemove= new ArrayList<Integer>();
-                    for(int j=0;j<lineDrewColors.size();j++){
-                        int[] colorToCheck = lineDrewColors.get(j);
-                        if (r==colorToCheck[0] && g==colorToCheck[1] && b==colorToCheck[2]){
-                            valToRemove.add(j);
-                        }
-                    }
-                    for(int j=0;j<valToRemove.size();j++){
-                        float positionToRemove= lineDrewPositions.get(valToRemove.get(j));
-                        removeVerticalLine(positionToRemove,checkBoxCurrent);
-                        for(int k=0;k<valToRemove.size();k++){
-                            valToRemove.set(k,valToRemove.get(k)-1);
-                        }
-                    }
-                }
-                //get the min and max values to draw
-                for (int j=0;j<2;j++){
-                    JTextField textFieldMinMax = (JTextField) tabJCompToCheck[j+2];
-                    if ( !(textFieldMinMax.getText().equals("Min") || textFieldMinMax.getText().equals("Max")) ) {
-                        float minMax = -1;
-                        try {
-                            minMax = Float.valueOf(textFieldMinMax.getText());
-                        }
-                        catch(NumberFormatException e2){}
-                        if (minMax>-1){
-                            if(checkBoxCurrent.isSelected()) {
-                                if(! lineDrewPositions.contains(minMax)){
-                                    drawVerticalLine(minMax,checkBoxCurrent);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+         for (Object vectButton : vectButtons) {
+             JComponent[] tabJCompToCheck = (JComponent[]) vectButton;
+             JCheckBox checkBoxCurrent = (JCheckBox) tabJCompToCheck[0];
+             if(objectActivated==checkBoxCurrent){
+                 if(checkBoxCurrent.isSelected())
+                     lastCheckBoxActivated=checkBoxCurrent;
+                 //first reset : check up; if min/max has been changed, markers' colors need to be rechecked.
+                 // this checkbox = one color so it checks if markers of this color remain, they have to be removed.
+                 int indexOfCheckBox = checkBoxList.indexOf(checkBoxCurrent);
+                 if (indexOfCheckBox!=-1){
+                     int[] colorRGBOfCheckBox=colorList.get(indexOfCheckBox);
+                     int r=colorRGBOfCheckBox[0];
+                     int g=colorRGBOfCheckBox[1];
+                     int b=colorRGBOfCheckBox[2];
+                     ArrayList<Integer> valToRemove= new ArrayList<>();
+                     for(int j=0;j<lineDrewColors.size();j++){
+                         int[] colorToCheck = lineDrewColors.get(j);
+                         if (r==colorToCheck[0] && g==colorToCheck[1] && b==colorToCheck[2]){
+                             valToRemove.add(j);
+                         }
+                     }
+                     for(int j=0;j<valToRemove.size();j++){
+                         float positionToRemove= lineDrewPositions.get(valToRemove.get(j));
+                         removeVerticalLine(positionToRemove,checkBoxCurrent);
+                         for(int k=0;k<valToRemove.size();k++){
+                             valToRemove.set(k,valToRemove.get(k)-1);
+                         }
+                     }
+                 }
+                 //get the min and max values to draw
+                 for (int j=0;j<2;j++){
+                     JTextField textFieldMinMax = (JTextField) tabJCompToCheck[j+2];
+                     if ( !(textFieldMinMax.getText().equals("Min") || textFieldMinMax.getText().equals("Max")) ) {
+                         float minMax = -1;
+                         try {
+                             minMax = Float.valueOf(textFieldMinMax.getText());
+                         }
+                         catch(NumberFormatException e2){}
+                         if (minMax>-1){
+                             if(checkBoxCurrent.isSelected()) {
+                                 if(! lineDrewPositions.contains(minMax)){
+                                     drawVerticalLine(minMax,checkBoxCurrent);
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
     }
     
     /**
+     * @param min
+     * @param max
      * @return a randomly generated number between min and max (max included)
      */
     public static int randInt(int min, int max) {
@@ -261,14 +265,17 @@ public class CheckBoxListenerSp implements ItemListener,DocumentListener{
         catch(BadLocationException e){}
     }
     
+     @Override
     public void insertUpdate(DocumentEvent dEvt) {
         handlesDocumentEvt(dEvt);
     }
 
+     @Override
     public void removeUpdate(DocumentEvent dEvt) {
         handlesDocumentEvt(dEvt);
     }
 
+     @Override
     public void changedUpdate(DocumentEvent e) {
         //not used
     }

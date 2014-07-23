@@ -54,7 +54,7 @@ public final class Spectra {
    * @param filename name of the file (ex : "name".pixe (or an other extension) contains the ADC information)
    */
   public Spectra(ADC adc,String filename) {
-        this.producedMaps = new ArrayList<>();
+    this.producedMaps = new ArrayList<>();
     this.adc=adc;
     this.filename=filename;
     yEvt=adc.getSpectra();
@@ -100,7 +100,7 @@ public final class Spectra {
   */
   public Spectra(ADC adc,String filename,GeneratedMap generatedMap) {
     this(adc,filename);
-        this.producedMaps = new ArrayList<>();
+    this.producedMaps = new ArrayList<>();
     resX=generatedMap.getWidth()-1;
     resY=generatedMap.getHeight()-1;
   }
@@ -234,11 +234,11 @@ public final class Spectra {
    */
   public XYPlotSp plotSpectra(String titleWindow, String titleGraph, int nROI){
     PrefsManager prefs=new PrefsManager();
-      if(nROI<=0)nROI=Integer.valueOf(prefs.ijGetValue("IBA.nROI",""+10));
+    if(nROI<=0)nROI=Integer.valueOf(prefs.ijGetValue("IBA.nROI",""+10));
       
     double[] xEnergies = convertFloatsToDoubles(getEnergies());
     XYPlotSp plot1=new XYPlotSp(this,titleWindow,titleGraph,xEnergies,yEvt,nROI);
-    return plot1;//plot1.showVisible()
+    return plot1;
   }
 
   /**

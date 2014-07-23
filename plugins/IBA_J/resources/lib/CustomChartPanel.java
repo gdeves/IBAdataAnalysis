@@ -38,7 +38,7 @@ public class CustomChartPanel extends ChartPanel implements MouseListener {
     } 
 
     private boolean isACheckBoxSelected(){
-        return !parentXYPlotSp.getCheckBoxSelected().isEmpty();
+        return !parentXYPlotSp.getSelectedCheckBox().isEmpty();
     }
     
     /** 
@@ -78,9 +78,9 @@ public class CustomChartPanel extends ChartPanel implements MouseListener {
     } 
     
     public void update(float endValueX){
-        JCheckBox checkBoxToChange = parentXYPlotSp.getLastCheckBoxActivated();
+        JCheckBox checkBoxToChange = parentXYPlotSp.getLastActivatedCheckBox();
         if (!checkBoxToChange.isSelected()){
-            ArrayList<JCheckBox> checkBoxsSelected = parentXYPlotSp.getCheckBoxSelected();
+            ArrayList<JCheckBox> checkBoxsSelected = parentXYPlotSp.getSelectedCheckBox();
             int nbOfCheckBox = checkBoxsSelected.size();
             checkBoxToChange = checkBoxsSelected.get(nbOfCheckBox-1);
         }
