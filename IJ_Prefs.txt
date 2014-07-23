@@ -1,5 +1,5 @@
 #ImageJ 1.45s Preferences
-#Wed Jul 23 12:11:07 CEST 2014
+#Wed Jul 23 13:00:10 CEST 2014
 .bioformats.record=false
 fps=7.0
 new.slices=1
@@ -63,7 +63,7 @@ new.fill=0
 bcolor=\#000000
 menu.size=14
 .bioformats.customColorize=false
-dir.image=C\:\\Documents and Settings\\deves\\Bureau\\article\\
+dir.image=E\:\\Manip\\Annee_2014\\Avril2014\\
 .bioformats.crop=false
 .b&c.loc=1180,216
 .IBA.roi4.min=284

@@ -1,6 +1,7 @@
 package IBA_J.ConvertListFiles.ADC;
 import java.util.ArrayList;
 import ij.*;
+import ij.process.ImageProcessor;
 import java.io.*;
 
 /**
@@ -444,4 +445,16 @@ public class ADC{
             catch (IOException e){
             }
     }
+        public void saveMedianImage(String path){
+            ImagePlus imp = new ImagePlus();  
+            ImageProcessor ip = imp.getProcessor(); 
+            for (int x=2;x<sizeMapX;x++) {
+                for (int y=1;y<sizeMapY;y++){
+                    ip.set(x,y,median.get(x+sizeMapX*y));
+                }
+                           
+            }
+            IJ.saveAs(imp, "TIFF",path);
+                                 
+        }    
 }

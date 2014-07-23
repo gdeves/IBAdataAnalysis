@@ -252,6 +252,7 @@ public class ActionsC{
 
       if((flags[21]==1)||(flags[25]==1)) adc.medianSort(); //map calculation
       if (flags[21]==1) adc.saveMedianTextImage(lF.setExtension("medMap.txt")); //saving map
+      if (flags[21]==1) adc.saveMedianImage(lF.setExtension("medMap.txt")); //saving map
       if (flags[25]==1) fillStack(adc,lF); //displaying map
       if (flags[20]==1) adc.saveCountsSpectra(lF.setExtension("stim.asc")); // save spectra
       //save XYE list file

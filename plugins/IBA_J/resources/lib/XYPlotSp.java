@@ -385,10 +385,7 @@ public class XYPlotSp extends JFrame {
         buttonsToAdd[3] = new JTextField();
         vectButtonsSupp.add(buttonsToAdd);
         JCheckBox checkBoxCurrent = (JCheckBox) buttonsToAdd[0];
-        
         checkBoxCurrent.setSelected(prefs.getROIState(ROI));
-        
-        
         JTextField textFieldCurrentName= (JTextField) buttonsToAdd[1];
         JTextField textFieldCurrentMin= (JTextField) buttonsToAdd[2];
         JTextField textFieldCurrentMax=(JTextField) buttonsToAdd[3];
@@ -399,6 +396,7 @@ public class XYPlotSp extends JFrame {
         checkBoxCurrent.addItemListener(checkBoxListener);
         textFieldCurrentMin.getDocument().addDocumentListener(checkBoxListener);
         textFieldCurrentMax.getDocument().addDocumentListener(checkBoxListener);
+        updateLinesOnChart(checkBoxCurrent);
     }
     private void jButtonMoreActionPerformed(java.awt.event.ActionEvent evt) {                                           
         initComponents(vectButtonsSupp.size()+1);
@@ -449,23 +447,7 @@ public class XYPlotSp extends JFrame {
         }
         return selectedCheckboxes;
     }
-        public void setSelectedCheckBox(){
-        
-        PrefsManager prefs=new PrefsManager();    
-        
-        int i=1;
-        for (Object vectButtonsSupp1 : vectButtonsSupp) {
-            JComponent[] jComponentTable;
-            jComponentTable = (JComponent[]) vectButtonsSupp1;
-            JCheckBox currentCheckbox = (JCheckBox) jComponentTable[0];
-            boolean [] states=prefs.getROIStates();
-            currentCheckbox.setSelected(states[i]);
-            i+=1;
-            
-            
-        }
-        
-    }
+
  
     
     public JCheckBox getLastActivatedCheckBox(){
@@ -483,11 +465,11 @@ public class XYPlotSp extends JFrame {
      * @return a vector containing the arraylist of the names and the arraylist of the [min,max]
      */
     public Vector getValuesMinMaxNames(boolean minOrMax, boolean nameIsImportant, boolean showError){
-        ArrayList<String> nameOfImgGen = new ArrayList<String>();
-        ArrayList<float[]> minMaxSpectra = new ArrayList<float[]>();
+        ArrayList<String> nameOfImgGen = new ArrayList<>();
+        ArrayList<float[]> minMaxSpectra = new ArrayList<>();
         boolean errorShowed1=false, errorShowed2=false, errorShowed3=false, errorShowed4=false;
-        for(int i=0; i<vectButtonsSupp.size();i++){
-            JComponent[] tabJCompToCheck = (JComponent[]) vectButtonsSupp.get(i);
+        for (Object vectButtonsSupp1 : vectButtonsSupp) {
+            JComponent[] tabJCompToCheck = (JComponent[]) vectButtonsSupp1;
             JCheckBox checkBoxCurrent = (JCheckBox) tabJCompToCheck[0];
             if(checkBoxCurrent.isSelected()){
                 JTextField name= (JTextField) tabJCompToCheck[1];
