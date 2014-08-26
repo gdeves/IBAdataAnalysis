@@ -1,0 +1,7 @@
+The command below has been tested under GNU/Linux :
+    Using a terminal, move to the ImageJ directory, then in the plugins directory :
+    Then type the command below :
+        javadoc -encoding utf8 -docencoding utf8 -charset utf8 -d SupavisioJ/resources/javadoc/ -link http://docs.oracle.com/javase/7/docs/api/ -link http://www.jfree.org/jfreechart/api/javadoc/ -link http://imagej.nih.gov/ij/developer/api/ -windowtitle "SupavisioJ API" -nodeprecatedlist -nodeprecated -classpath .:./lib/jfreechart.jar:./lib/jcommon.jar:./lib/ij.jar:./lib -private lib/*.java Supavisio_J.java SupavisioJ/*/*.java SupavisioJ/ConvertListFiles/*/*.java
+        
+    All the javadoc files produced will be in SupavisioJ/resources/javadoc/ .
+    Under Windows, to use this command, you must remplace the ":" separator by ";" to indicate classpaths.

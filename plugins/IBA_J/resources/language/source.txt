@@ -1,0 +1,38 @@
+# The first two lines of the file won't be read, so write useful information here
+# and here as versionning, state of the translation, author, ...
+English
+Spectra
+No settings available for the moment
+Uncoded feature for the moment
+Fail to save the session Spj
+Error. Language file not found or invalid
+Error. File not found.
+OK
+Error
+Choose a directory
+Ion Beam Data Evaluation
+Handle raw listfiles
+Work with ADC listfile
+Save working session
+Restore working session
+Give a name please
+Two elements have the same names
+The character '_' is not allowed
+Put numbers in the Min and Max text fields
+Min
+Max
+Name
+Save Gupix
+Save
+Log/Lin
+Generate pictures
+More ...
+NA
+Energies
+Events number
+Fail to save
+Please make a selection
+Saving file failure
+Calculate spectra
+Save All
+Calculated spectra

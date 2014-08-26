@@ -1,0 +1,101 @@
+<!-- Ant makefile for ImageJ -->
+
+<project name="ImageJ" default="run">
+
+   <target name="compile" description="Compile everything." >
+      <!-- First, ensure the build directory exists. -->
+      <mkdir dir="build" />
+      <!-- Build everything; add debug="on" to debug -->
+      <javac srcdir="." destdir="build" optimize="on" source="1.7" target="1.7" debug="on" 
+      classpath="./ij.jar" includeantruntime="true">
+         <!-- The plugins directory only needs to be 
+         present at runtime, not at build time. -->
+         <exclude name="plugins/**" />
+        <!--compilerarg line="-Xlint:deprecation -Xlint:unchecked"-->
+      </javac>
+    </target>
+  
+   <target name="compilePlugins" description="Compile plugins">
+      <javac srcdir="plugins" destdir="plugins" optimize="on" source="1.7" target="1.7" debug="on"
+      classpath="./ij.jar;./plugins/lib/;./plugins/lib/jfreechart.jar;./plugins/lib/jcommon.jar" fork="yes"/>
+    </target>
+    
+   <target name="build" depends="compile" description="Build ij.jar.">
+      <!-- Copy needed files into the build directory. -->
+      <copy file="IJ_Props.txt" todir="build" />
+      <copy file="images/microscope.gif" tofile="build/microscope.gif" />
+      <copy file="images/about.jpg" tofile="build/about.jpg" />
+      <copy file="plugins/MacAdapter.class" tofile="build/MacAdapter.class" /> 
+      <copy file="plugins/JavaScriptEvaluator.class" tofile="build/JavaScriptEvaluator.class" /> 
+      <copy file="plugins/MacClipboard.class" tofile="build/MacClipboard.class" />
+      <copy todir="build/macros"><fileset dir="macros"/></copy>
+      <copy todir="plugins">
+         <fileset dir="build">
+            <include name="*.class"/>
+         </fileset>
+      </copy>
+      <!-- Build ij.jar. -->
+      <jar jarfile="ij.jar" basedir="build"
+      manifest="MANIFEST.MF" />
+   </target>
+
+  
+   <target name="clean" description="Delete the build files.">
+      <delete dir="build" />
+      <delete file="ij.jar" />
+   </target>
+
+   <target name="cleanplugins" description="Delete plugins class files.">
+      <delete>
+          <fileset dir="plugins">
+            <include name="*.class"/>
+         </fileset> 
+      </delete>
+   </target>
+   
+   
+   <target name="run" depends="build" description="Build and run ImageJ.">
+      <java maxmemory="640m" jar="ij.jar" fork="yes" />
+   </target>
+   
+   
+   <target name="run2" depends="build" description="Build and run ImageJ.">
+      <java classpath="ij.jar" fork="yes" classname="ij.ImageJ" />
+   </target>
+
+   <target name="myDebug" depends="build" description="Debug ImageJ.">
+     <java fork="on"
+           failonerror="true"
+           classpath="ij.jar"
+           classname="ij.ImageJ">
+         <jvmarg line="-Xdebug" />
+         <arg line="--arg1"/>
+      </java>
+    </target>
+   
+   
+   <target name="zip" depends="clean" description="Build zrc.zip.">
+      <zip zipfile="../src.zip"
+      basedir=".."
+      includes="src/**"
+      />
+   </target>
+
+
+   <target name="javadocs" description="Build the JavaDocs.">
+      <delete dir="../api" />
+      <mkdir dir="../api" />
+      <javadoc 
+         sourcepath="."
+         packagenames="ij.*"
+         destdir="../api"
+         author="true"
+         version="true"
+         use="true"
+         windowtitle="ImageJ API">
+      </javadoc>
+   </target>
+  
+  
+</project>
+

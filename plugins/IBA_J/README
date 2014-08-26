@@ -1,0 +1,24 @@
+For users :
+  To run ImageJ with all its plugins :
+    - under WINDOWS : you can run the .bat or the .exe file in this directory
+    - under Mac or Linux  : open a terminal and change your directory to the one where you put imageJ and run "bash run" in the terminal
+    
+  ! If you had this plugin to your own ImageJ directory : We strongly advice to use ImageJ 1.45s or higher (but it has not been tested with higher version).
+  ! If you don't success the run of ImageJ or the plugin SupavisioJ check your version of Java (need to be 1.7).
+  
+  In the directory plugins, the files .java under the SupavisioJ directory, the lib directory and the file Supavisio_J.java are under the GPL v3.0 LICENCE
+  (For more details see the LICENCE and COPYING files).
+
+  
+For developers : 
+  Java 1.7 is required.
+  You can open the directory containing ImageJ as a NetBeans Project (NetBeans--> Open a project). 
+  Compilation :
+      All sources .java of SupavisioJ can be compiled from netbeans 7.4. (the easiest way)
+      You can also compiled in a terminal by :
+          1- move to the plugins directory using the terminal
+          2- under Linux :  javac -cp .:./lib/jfreechart.jar:./lib/jcommon.jar:./lib/ij.jar:./lib ./SupavisioJ/resources/lib/file.java 
+            under Windows : path\javac.exe -cp .;.\lib\jfreechart.jar;.\lib\jcommon.jar;.\lib\ij.jar;.\lib .\SupavisioJ\resources\lib\myfile.java
+          NB : if you want use all the features proposed by jfreechart you have to use all the .jar in plugins/lib
+  You can access to the Javadoc using resources/classDiagram.html.
+  If you need more information, you can contact the authors of the project.
