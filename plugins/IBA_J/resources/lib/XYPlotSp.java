@@ -541,7 +541,12 @@ public class XYPlotSp extends JFrame {
     
     private String selectDirectory(){
         File selectedFile = null;
+        PrefsManager prefs=new PrefsManager();
+        prefs.setPreference();
         JFileChooser fileChooser = new JFileChooser();
+        File myDir=new File(prefs.getLastUsedDirectory());
+        IJ.log("start "+prefs.getLastUsedDirectory());
+        fileChooser.setCurrentDirectory(myDir);
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         int option = fileChooser.showDialog(null,tr("Choose directory"));

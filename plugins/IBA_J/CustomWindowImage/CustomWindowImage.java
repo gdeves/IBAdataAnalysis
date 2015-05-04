@@ -7,12 +7,12 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.ImageCanvas;
-import ij.gui.Roi;
 import ij.gui.StackWindow;
 import ij.gui.YesNoCancelDialog;
 import ij.io.FileSaver;
 import ij.macro.Interpreter;
 import ij.plugin.frame.RoiManager;
+import IBA_J.Prefs.PrefsManager;
 
 import java.awt.Button;
 import java.awt.FlowLayout;
@@ -162,7 +162,12 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
     
     private String selectDirectory(){
         File selectedFile = null;
+        PrefsManager prefs=new PrefsManager();
+        prefs.setPreference();
         JFileChooser fileChooser = new JFileChooser();
+        File myDir=new File(prefs.getLastUsedDirectory());
+        IJ.log("start "+prefs.getLastUsedDirectory());
+        fileChooser.setCurrentDirectory(myDir);
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         int option = fileChooser.showDialog(null,tr("Choose directory"));
@@ -171,6 +176,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
              // if the user accidently clicks on a file,the parent directory is selected.
             if (!selectedFile.isDirectory()) {
                 selectedFile = selectedFile.getParentFile();
+                prefs.saveDirectory(selectedFile.getAbsolutePath());
             }
         }
         if (selectedFile!=null)
