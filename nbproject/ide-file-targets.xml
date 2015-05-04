@@ -5,7 +5,7 @@
     <target name="compile-selected-files-in-plugins">
         <fail unless="files">Must set property 'files'</fail>
         <!-- TODO decide on and define some value for ${build.classes.dir} -->
-        <javac destdir="plugins" includes="${files}" source="1.7" srcdir="plugins">
+        <javac destdir="plugins" includes="${files}" source="1.7" srcdir="plugins" includeantruntime="false">
             <classpath path="./ij.jar;./plugins/lib/;./plugins/lib/jfreechart.jar;./plugins/lib/jcommon.jar"/>
         </javac>
     </target>

@@ -89,7 +89,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             z = zSelector.getValue()-1; 
         if (b==buttonCalc) {
             Spectra spectraCalc=selectedImages[z].generateSpectraFromRoi();
-            spectraCalc.plotSpectra((String)"IBA_J", (String) tr("Calculated spectra")+" "+spectraCalc.getFileName()).showVisible();
+            spectraCalc.plotSpectra((String)"IBA_J", (String) tr("Calculated spectra")+" "+spectraCalc.getPath()).showVisible();
         }
         if (b==buttonSave) {
             // save selected image

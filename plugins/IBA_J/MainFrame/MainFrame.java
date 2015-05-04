@@ -288,7 +288,7 @@ public final class MainFrame extends javax.swing.JFrame {
             }
             else if(path.contains("spct.spj")){
                 Spectra spectToRestore = new Spectra(path,this);
-                spectToRestore.plotSpectra(nameOfApplication, (String)  tr("Spectra")+" "+spectToRestore.getFileName()).showVisible();
+                spectToRestore.plotSpectra(nameOfApplication, (String)  tr("Spectra")+" "+spectToRestore.getPath()).showVisible();
             }
             else if(path.contains("img.spj")){
                 int index=path.lastIndexOf("/")+1;
@@ -297,7 +297,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 String nameSourceSpectra = path.substring(index,path.lastIndexOf("_"));
                 Spectra sourceSpectra=null;
                 for (Spectra currentSpct : spectrasProduced) {
-                    if (currentSpct.getFileName().equals(nameSourceSpectra)){
+                    if (currentSpct.getPath().equals(nameSourceSpectra)){
                         sourceSpectra=currentSpct;
                     }
                 }
@@ -305,7 +305,7 @@ public final class MainFrame extends javax.swing.JFrame {
                     String directory = path.substring(0, index);
                     String nameToSave = nameSourceSpectra+".spct.spj";
                     sourceSpectra=new Spectra(directory+nameToSave, this);
-                    sourceSpectra.plotSpectra(nameOfApplication, (String) tr("Spectra")+" "+sourceSpectra.getFileName());
+                    sourceSpectra.plotSpectra(nameOfApplication, (String) tr("Spectra")+" "+sourceSpectra.getPath());
                 }
                 sourceSpectra.restoreImgGen(path);
             }
@@ -371,7 +371,7 @@ public final class MainFrame extends javax.swing.JFrame {
             for (String readLine : readLines) {
                 if (readLine.contains("spct")){
                     Spectra spectToRestore = new Spectra(directory+readLine,this);
-                    spectToRestore.plotSpectra(nameOfApplication,  (String) tr("Spectra")+" "+spectToRestore.getFileName()).showVisible();
+                    spectToRestore.plotSpectra(nameOfApplication,  (String) tr("Spectra")+" "+spectToRestore.getPath()).showVisible();
                 }
                 else if (readLine.contains("img")){
                     Spectra sourceSpectra = spectrasProduced.get(spectrasProduced.size()-1);

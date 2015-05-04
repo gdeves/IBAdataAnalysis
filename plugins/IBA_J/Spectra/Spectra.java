@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.File;
 import IBA_J.resources.lib.XYPlotSp;
 
 
@@ -32,7 +33,7 @@ public final class Spectra {
   private int resX=0; // useful if Spectra generated from an ImageGenerated
   private int resY=0; // useful if Spectra generated from an ImageGenerated
   private String directory=null;// useful for saving and restoring
-  private String filename =null; //if spectra open from a file or a parent spectra
+  private String filename =null; //if spectra is open from a file or a parent spectra
   private int level=0; //to know if the spectra has been produced from a spectra or a file (if file : level=0)
   private static MainFrame parentWindow;
   private ArrayList<GeneratedMap> producedMaps;
@@ -129,12 +130,17 @@ public final class Spectra {
       return directory;
   }
   
-  public String getFileName(){
+  public String getPath(){
       if (level==0)
         return filename;
       return filename+"-"+String.valueOf(level);
   }
-  
+    public String getFilename(){
+        File f=new File(getPath());
+        if (level==0)
+        return f.getName();
+      return f.getName()+"-"+String.valueOf(level);
+  }
   public int getChannelMin(){
       return channelMinim;
   }
@@ -351,7 +357,7 @@ public final class Spectra {
   }   
   
    public String getNameToSave(){
-       return getFileName()+".spct.spj";
+       return getPath()+".spct.spj";
    }
   
     /**

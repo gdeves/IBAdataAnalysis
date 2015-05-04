@@ -104,14 +104,14 @@ public class GeneratedMap {
   
   public ImagePlus getImagePlus(){
       if(imgWindow==null){
-        return new ImagePlus(sourceSpectra.getFileName()+"_"+title,imageProc);
+        return new ImagePlus(sourceSpectra.getPath()+"_"+title,imageProc);
       }
       else
         return imgWindow.getImagePlus();
   }
   
   public ImagePlus getImagePlus(ImageStack imgStack){
-      return new ImagePlus(sourceSpectra.getFileName(),imgStack);
+      return new ImagePlus(sourceSpectra.getPath(),imgStack);
   }
     
   public ImageProcessor getIrregularRoi(){
@@ -148,7 +148,7 @@ public class GeneratedMap {
                   adcToCalcFromRoi.addEvent(currentEvt);
               }
         }   
-        String nameFile=sourceSpectra.getFileName();
+        String nameFile=sourceSpectra.getPath();
         Spectra spectreNewCalc= new Spectra(adcToCalcFromRoi,nameFile,this);
         spectreNewCalc.setLevel(sourceSpectra.getLevel()+1);
         spectreNewCalc.setParentWindow(sourceSpectra.getParentWindow());
@@ -164,7 +164,7 @@ public class GeneratedMap {
    * @return a name containing the sourceSpectra name, the ImageGen name and the extension of the file to save.
    */
   public String getNameToSave(){
-       return sourceSpectra.getFileName()+"_"+getTitle()+".img.spj";
+       return sourceSpectra.getPath()+"_"+getTitle()+".img.spj";
   }
   
   /**

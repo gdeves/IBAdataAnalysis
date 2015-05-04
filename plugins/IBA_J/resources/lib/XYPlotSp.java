@@ -6,6 +6,7 @@ import IBA_J.Spectra.Spectra;
 import IBA_J.Prefs.PrefsManager;
 import ij.*;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
@@ -238,21 +239,17 @@ public class XYPlotSp extends JFrame {
         int nbLines=nROI/3;
         if (nROI%3>0) nbLines+=1;
         int nbFieldsPerLine=3;
+        IJ.log("N retrieved ROI from Prefs : "+String.valueOf(nROI));
         for (int i=0; i<nbLines;i++){
-            IJ.log("nbLines "+String.valueOf(nbLines));
-            IJ.log("nROI "+String.valueOf(nROI));
+            
             SequentialGroup grp1 = layoutPanelFields.createSequentialGroup();
             grp1.addContainerGap();
-            IJ.log("nbFieldsPerLine avt "+String.valueOf(nbFieldsPerLine));
             if (i==nbLines-1)
                 nbFieldsPerLine=(nROI%3);
-            IJ.log("nbFieldsPerLine apCond1 "+String.valueOf(nbFieldsPerLine));
             if (nbFieldsPerLine==0)
                 nbFieldsPerLine=3;
-            IJ.log("nbFieldsPerLine apCond2 "+String.valueOf(nbFieldsPerLine));
             for(int j=0;j<nbFieldsPerLine;j++){        
                 int currentField=i*3+j;
-                IJ.log("currentField "+String.valueOf(currentField));
                 JComponent[] tablJComp = (JComponent[]) vectButtonsSupp.get(currentField);
                 JCheckBox checkBoxCurrent = (JCheckBox) tablJComp[0];
                 JTextField textFieldCurrentName= (JTextField) tablJComp[1];
@@ -584,8 +581,12 @@ public class XYPlotSp extends JFrame {
      */
     private void jButtonSaveGupActionPerformed(java.awt.event.ActionEvent evt) {                                         
         String directory=selectDirectory();
+        IJ.log("Saving: ");
         if(directory!=null){
-            String nameToSave=drawSpectra.getFileName()+".gup";
+            File f=new File(drawSpectra.getPath());
+            String nameToSave=f.getName()+".gup";
+            IJ.log("Name: "+nameToSave);
+            IJ.log("Path: "+directory+nameToSave);
             drawSpectra.getADC().saveGupixSpectra(directory+nameToSave);
         }
     }

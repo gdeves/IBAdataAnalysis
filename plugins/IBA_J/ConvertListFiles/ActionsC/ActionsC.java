@@ -25,8 +25,8 @@ import javax.swing.JPanel;
 
 
 public class ActionsC{
-  private final Integer sizeMapX=1024;
-  private final Integer sizeMapY=1024;
+  private final Integer sizeMapX=256;
+  private final Integer sizeMapY=256;
 
   ArrayList <listFiles> listFilesArray=new ArrayList <>();
   int [] flags=new int[28];
@@ -252,7 +252,7 @@ public class ActionsC{
 
       if((flags[21]==1)||(flags[25]==1)) adc.medianSort(); //map calculation
       if (flags[21]==1) adc.saveMedianTextImage(lF.setExtension("medMap.txt")); //saving map
-      if (flags[21]==1) adc.saveMedianImage(lF.setExtension("medMap.txt")); //saving map
+      //if (flags[21]==1) adc.saveMedianImage(lF.setExtension("medMap.txt")); //saving map
       if (flags[25]==1) fillStack(adc,lF); //displaying map
       if (flags[20]==1) adc.saveCountsSpectra(lF.setExtension("stim.asc")); // save spectra
       //save XYE list file

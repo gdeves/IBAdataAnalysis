@@ -213,7 +213,7 @@ public class ImageStack {
 		and FITS stacks, labels may contain header information. */
 	public String getSliceLabel(int n) {
 		if (n<1 || n>nSlices)
-			throw new IllegalArgumentException(outOfRange+n);
+			throw new IllegalArgumentException(outOfRange);
 		return label[n-1];
 	}
 	
