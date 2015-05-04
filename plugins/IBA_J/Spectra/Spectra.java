@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
 import IBA_J.resources.lib.XYPlotSp;
+import ij.plugin.frame.RoiManager;
 
 
 /**
@@ -37,6 +38,7 @@ public final class Spectra {
   private int level=0; //to know if the spectra has been produced from a spectra or a file (if file : level=0)
   private static MainFrame parentWindow;
   private ArrayList<GeneratedMap> producedMaps;
+  private RoiManager roiManager;
   
   
   /**
@@ -133,7 +135,12 @@ public final class Spectra {
   public String getPath(){
       if (level==0)
         return filename;
-      return filename+"-"+String.valueOf(level);
+      return filename;
+  }
+  public String getPath(String roiName){
+      if (level==0)
+        return filename;
+      return filename+"-"+roiName;
   }
     public String getFilename(){
         File f=new File(getPath());
@@ -153,7 +160,9 @@ public final class Spectra {
   public int getLevel(){
       return level;
   } 
-   
+  public void setFilename(String filename){
+      this.filename=filename;
+  }   
   public void setLevel(int level){
       this.level=level;
   }

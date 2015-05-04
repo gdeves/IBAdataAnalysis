@@ -7,10 +7,12 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.ImageCanvas;
+import ij.gui.Roi;
 import ij.gui.StackWindow;
 import ij.gui.YesNoCancelDialog;
 import ij.io.FileSaver;
 import ij.macro.Interpreter;
+import ij.plugin.frame.RoiManager;
 
 import java.awt.Button;
 import java.awt.FlowLayout;
@@ -34,7 +36,8 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
     private Button buttonSaveAll;
     private JLabel imageName;
     private JTextField nameRoiField;
-    private final GeneratedMap[] selectedImages; 
+    private final GeneratedMap[] selectedImages;
+    private RoiManager roiManager;
 
     // constructor
     public CustomWindowImage(ImagePlus imp, GeneratedMap[] selectedImages) {
@@ -45,6 +48,8 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             remove(zSelector);
         }
         addPanel();
+        roiManager = RoiManager.getInstance();
+        if (roiManager==null) roiManager=new RoiManager();
     }   
 
     /**
@@ -88,8 +93,12 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         if(selectedImages.length>1)
             z = zSelector.getValue()-1; 
         if (b==buttonCalc) {
-            Spectra spectraCalc=selectedImages[z].generateSpectraFromRoi();
-            spectraCalc.plotSpectra((String)"IBA_J", (String) tr("Calculated spectra")+" "+spectraCalc.getPath()).showVisible();
+            
+            roiManager.add(imp,imp.getRoi(),roiManager.getCount()+1);
+            IJ.log("calculating spectra from ROI "+roiManager.getName(roiManager.getCount()-1));
+            Spectra roiSpectra=selectedImages[z].generateSpectraFromRoi();
+            roiSpectra.setFilename(roiSpectra.getPath(roiManager.getName(roiManager.getCount()-1)));
+            roiSpectra.plotSpectra((String)"Spectra from ROI: "+roiManager.getName(roiManager.getCount()-1), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
         }
         if (b==buttonSave) {
             // save selected image

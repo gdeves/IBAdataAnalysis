@@ -1,5 +1,5 @@
 #ImageJ 1.45s Preferences
-#Fri Apr 24 14:54:55 CEST 2015
+#Mon May 04 16:13:17 CEST 2015
 .bioformats.record=false
 fps=7.0
 new.slices=1
@@ -34,7 +34,7 @@ mark.width=0
 raw.n=1
 raw.type=2
 .IBA.roi3.name=Al
-.IBA.LAST_USED_DIR=D\:\\Manip\\Ann\u00E9e_2015\\Avril2015\\PIXE\\celegans\\PIXE_105.ADC17.pixe2
+.IBA.LAST_USED_DIR=D\:\\Manip\\Ann\u00E9e_2015\\Avril2015\\PIXE\\celegans\\PIXE_071.ADC17.pixe2
 .bioformats.stackFormat=Standard ImageJ
 ij.y=13
 ij.x=655
