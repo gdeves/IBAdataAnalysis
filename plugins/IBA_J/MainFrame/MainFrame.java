@@ -238,6 +238,12 @@ public final class MainFrame extends javax.swing.JFrame {
             }
             catch (Exception e){}
         }
+        try {
+            IJ.log("Done.");
+            if (ips != null) ips.close(); 
+        }
+        catch(IOException e){}
+            
 
         if ( adc.getNEvents()>1 && (adc.getlastEvent()[0]!=0 && adc.getlastEvent()[1]!=0) ){//check if a correct file has been open
             Spectra spectraXYE= new Spectra(adc,path);

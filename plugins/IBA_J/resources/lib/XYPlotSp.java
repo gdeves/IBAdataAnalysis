@@ -543,33 +543,34 @@ public class XYPlotSp extends JFrame {
         File selectedFile = null;
         PrefsManager prefs=new PrefsManager();
         prefs.setPreference();
-        JFileChooser fileChooser = new JFileChooser();
         File myDir=new File(prefs.getLastUsedDirectory());
+        JFileChooser fileChooser = new JFileChooser(myDir.getAbsolutePath());
         IJ.log("start "+prefs.getLastUsedDirectory());
         fileChooser.setCurrentDirectory(myDir);
         fileChooser.setMultiSelectionEnabled(false);
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        int option = fileChooser.showDialog(null,tr("Choose directory"));
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int option = fileChooser.showDialog(null,tr("Select directory"));
         if (option == JFileChooser.APPROVE_OPTION) {
             selectedFile = fileChooser.getSelectedFile();
              // if the user accidently clicks on a file, the parent directory is selected.
             if (!selectedFile.isDirectory()) {
                 selectedFile = selectedFile.getParentFile();
-            }
+                }
         }
-        if (selectedFile!=null)
-            return selectedFile.getAbsolutePath()+"/";
-        return null;
+        if (selectedFile!=null){
+            prefs.saveDirectory(selectedFile.getAbsolutePath());
+            return selectedFile.getAbsolutePath()+"/";}
+        return myDir.getAbsolutePath();
     }
     
     private void jButtonLogLinActionPerformed(java.awt.event.ActionEvent evt) {                                         
         XYPlot plot = (XYPlot) chart.getPlot();
         if (!yIsLog){
-            plot.setRangeAxis(new LogarithmicAxis(tr("Events number")));
+            plot.setRangeAxis(new LogarithmicAxis(tr("X-ray intensity (counts)")));
             yIsLog=true;
         }
         else{
-            plot.setRangeAxis(new NumberAxis(tr("Events number")));
+            plot.setRangeAxis(new NumberAxis(tr("X-ray intensity (counts)")));
             yIsLog=false;
         }
     }
@@ -641,8 +642,8 @@ public class XYPlotSp extends JFrame {
     
     public String checkCalib(){
         if(drawSpectra.isScaled())
-            return "Energies";
-        return "Energy channels";
+            return "Photon energy (keV)";
+        return "Photon energy (channels)";
     }
         
     // Variables declaration - do not modify 

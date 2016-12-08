@@ -1,1 +1,1 @@
-javaw.exe -Xmx1599m -classpath .\ExternalLibraries\jung2-2_0\*;.\ExternalLibraries\jama\*;ij.jar -cp ij.jar ij.ImageJ
+javaw.exe -Xmx4000m -classpath .\ExternalLibraries\jung2-2_0\*;.\ExternalLibraries\jama\*;ij.jar -cp ij.jar ij.ImageJ

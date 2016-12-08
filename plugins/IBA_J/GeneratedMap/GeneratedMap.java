@@ -137,14 +137,11 @@ public class GeneratedMap {
       if(ipRoi!=null){
         ADC adcToCalcFromRoi = new ADC();
         ADC sourceAdc = sourceSpectra.getADC();
-        int channelMin=sourceSpectra.getIndex(startSpectra, false)+sourceSpectra.getChannelMin();
-        int channelMax=sourceSpectra.getIndex(endSpectra, true)+sourceSpectra.getChannelMin();
         for (int nbEvt=0; nbEvt<sourceAdc.getNEvents(); nbEvt++){
             int[] currentEvt= sourceAdc.getEvent(nbEvt);
             int xPix = currentEvt[0]-1;
             int yPix = currentEvt[1]-1;
-            int channelEnerPix = currentEvt[2];
-              if (ipRoi.contains(xPix,yPix)){
+            if (ipRoi.contains(xPix,yPix)){
                   adcToCalcFromRoi.addEvent(currentEvt);
               }
         }   

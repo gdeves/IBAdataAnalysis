@@ -1960,6 +1960,7 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="jCheckBox4">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="SimNRA"/>
                 <Property name="name" type="java.lang.String" value="jCheckBox4" noResource="true"/>
               </Properties>

@@ -1341,6 +1341,7 @@ public class FrameC extends javax.swing.JFrame {
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         jPanelC.add(jCheckBox3, gridBagConstraints);
 
+        jCheckBox4.setSelected(true);
         jCheckBox4.setText("SimNRA");
         jCheckBox4.setName("jCheckBox4"); // NOI18N
         jCheckBox4.addActionListener(new ActionListener() {

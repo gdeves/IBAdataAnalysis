@@ -79,7 +79,7 @@ public final class Spectra {
   // constructor with an ADC, a float value for lower energy delimiter and
   // a boolean to retrieve the energy value
   /**
-   * Use this constructor if the Spectra don't start at the channel 0
+   * Use this constructor if the Spectra does not start at channel 0
      * @param adc
      * @param filename
      * @param energyMin
@@ -109,7 +109,7 @@ public final class Spectra {
   }
   
   /**
-   * Use this constructor if the Spectra is generated from an ImageGenerated and don't start at the channel 0
+   * Use this constructor if the Spectra is generated from an ImageGenerated and does not start at channel 0
      * @param adc
      * @param filename
      * @param gMap
@@ -121,6 +121,10 @@ public final class Spectra {
         this.producedMaps = new ArrayList<>();
     resX=gMap.getWidth()-1;
     resY=gMap.getHeight()-1;
+  }
+  
+  protected void finalize() throws Throwable {
+   super.finalize();
   }
   
   // getters & setters

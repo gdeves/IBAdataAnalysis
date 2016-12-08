@@ -91,10 +91,10 @@ public class ADC{
             try{
 
             for (int i=0;i<getNEvents();i++){
-                            int [] evt=new int[3];
-                            evt=getEvent(i);
-                            if (evt[2]<size) spectra[evt[2]]+=1;
-                            }
+                int [] evt;
+                evt = getEvent(i);
+                if (evt[2]<size) spectra[evt[2]]+=1;
+            }
 
             }
             catch (Exception e){
@@ -112,9 +112,9 @@ public class ADC{
             double[] spectra=new double[size];
             try{
                     for (int i=0;i<getNEvents();i++){
-                            int [] evt=new int[3];
-                            evt=getEvent(i);
-                            if (evt[2]<size) spectra[evt[2]]+=1;
+                        int [] evt;
+                        evt = getEvent(i);
+                        if (evt[2]<size) spectra[evt[2]]+=1;
                     }
             }
             catch (Exception e){

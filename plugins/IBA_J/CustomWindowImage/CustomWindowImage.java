@@ -24,7 +24,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -37,7 +41,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
     private JLabel imageName;
     private JTextField nameRoiField;
     private final GeneratedMap[] selectedImages;
-    private RoiManager roiManager;
+    private RoiManager manager;
 
     // constructor
     public CustomWindowImage(ImagePlus imp, GeneratedMap[] selectedImages) {
@@ -48,8 +52,8 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             remove(zSelector);
         }
         addPanel();
-        roiManager = RoiManager.getInstance();
-        if (roiManager==null) roiManager=new RoiManager();
+        manager = RoiManager.getInstance();
+        if (manager==null) manager=new RoiManager();
     }   
 
     /**
@@ -63,10 +67,10 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             nbFields=7;
         panel.setLayout(new GridLayout(nbFields,1));
         nameRoiField = new JTextField();
-        nameRoiField.setText(tr("Name of the ROI"));
+        nameRoiField.setText(tr("ROI name"));
         buttonCalc = new Button(tr("Calculate spectra"));
         buttonCalc.addActionListener(this);
-        buttonSave = new Button(tr("Save"));
+        buttonSave = new Button("Calculate all spectra");
         buttonSave.addActionListener(this);
         buttonSaveAll = new Button(tr("Save All"));
         buttonSaveAll.addActionListener(this);
@@ -92,20 +96,26 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         int z=0;
         if(selectedImages.length>1)
             z = zSelector.getValue()-1; 
+        
         if (b==buttonCalc) {
-            
-            roiManager.add(imp,imp.getRoi(),roiManager.getCount()+1);
-            IJ.log("calculating spectra from ROI "+roiManager.getName(roiManager.getCount()-1));
-            Spectra roiSpectra=selectedImages[z].generateSpectraFromRoi();
-            roiSpectra.setFilename(roiSpectra.getPath(roiManager.getName(roiManager.getCount()-1)));
-            roiSpectra.plotSpectra((String)"Spectra from ROI: "+roiManager.getName(roiManager.getCount()-1), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
+            manager.add(imp,imp.getRoi(),manager.getCount()+1);
+            IJ.log("calculating spectra from ROI "+manager.getName(manager.getCount()-1));
+            Spectra roiSpectra=selectedImages[0].generateSpectraFromRoi();
+            roiSpectra.setFilename(roiSpectra.getPath(manager.getName(manager.getCount()-1)));
+            roiSpectra.plotSpectra((String)"Spectra from ROI: "+manager.getName(manager.getCount()-1), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
         }
         if (b==buttonSave) {
-            // save selected image
-            String directory=selectDirectory();
-            if (directory!=null){
-                selectedImages[z].save(directory);
-            }
+                           
+            for (int index=0; index<manager.getCount();index++){
+                manager.select(index);
+                IJ.log("calculating spectra from ROI "+manager.getName(index));
+                Spectra roiSpectra=selectedImages[0].generateSpectraFromRoi();
+                roiSpectra.setFilename(roiSpectra.getPath(manager.getName(index)));
+                roiSpectra.plotSpectra((String)"Spectra from ROI: "+manager.getName(index), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
+                roiSpectra.getADC().saveGupixSpectra(roiSpectra.getPath()+".gup");
+            
+            
+            } 
         }
         if (b==buttonSaveAll) {
             //save all images generate from parent Spectra
@@ -179,8 +189,9 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
                 prefs.saveDirectory(selectedFile.getAbsolutePath());
             }
         }
-        if (selectedFile!=null)
-            return selectedFile.getAbsolutePath()+"/";
+        if (selectedFile!=null){
+            prefs.saveDirectory(selectedFile.getAbsolutePath());
+            return selectedFile.getAbsolutePath()+"/";}
         return null;
     }
 

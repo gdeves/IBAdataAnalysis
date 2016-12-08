@@ -3,6 +3,7 @@ package IBA_J.ConvertListFiles.listFiles;
 import IBA_J.ConvertListFiles.ADC.ADC;
 import java.io.*;
 import IBA_J.ConvertListFiles.MPA3.MPA3;
+import ij.*;
 
 /**
 * listFiles is the class representing an input file of type *.lst.
@@ -77,7 +78,8 @@ public class listFiles{
   * @return  A MPA3 object containing a list of ADC. Each event is stored in its corresponding ADC
   */  
   public MPA3 readListFile(int[] arrayOfActiveADC){
-	  MPA3 mpa=new MPA3();
+	
+        MPA3 mpa=new MPA3();
 	  try{
 		  DataInputStream ips=new DataInputStream(new BufferedInputStream(new FileInputStream(path)));  
 		  while(isReadingHeader(ips)){
@@ -93,7 +95,8 @@ public class listFiles{
 		  int SynTag=0;
 		  int zevt=0;
 		  int tmp=0;
-			  
+		  
+                  
 		  // b is a 4 bytes word
 		  // b[0] is the high word and b[3] the lowest
 		  // Dummy Word is 0xFFFFFFFF
@@ -104,11 +107,10 @@ public class listFiles{
 		  try{
                   	  b[0]=ips.readUnsignedByte();
 			  //loop until end of file is reached (b=-1)
-                          //int subFile=1;
-                          //while (subFile<8000000){subFile+=1;}
+                                                    //while (subFile<36000){subFile+=1;}
 			  while (b[0]>-1){
-                          //while(subFile<9000000){
-				  //Read 4 bytes and fills b[] tab, reversing order to switch from little endian to big endian order
+                          //while (b[0]>-1{   
+                           //Read 4 bytes and fills b[] tab, reversing order to switch from little endian to big endian order
 				  for (int i=0;i<4;i++){
 					  b[3-i]=ips.readUnsignedByte();
 				  }
@@ -141,7 +143,8 @@ public class listFiles{
 					  break;
 					  //Event tag
 					  case 0:
-						  eventTag+=1;
+						  
+                                                  eventTag+=1;
 						  //dummy word
 						  if (checkBit(b[0],7)==1) ips.readShort();
 						  int [] evt= new int[16];
@@ -152,19 +155,27 @@ public class listFiles{
 							  if (checkBit(b[2],i)==1) evt[i+8]=safeBytesToInt(ips.readUnsignedByte(),ips.readUnsignedByte());
 						  }
 						  zevt+=sortEvents(mpa,evt);
-						  
+                                                  //if (timerTag>108000 & timerTag<112000) zevt+=sortEvents(mpa,evt);
+                                                  
 					  break;
 				  }
-                                  //subFile+=1;
-			  }			
+                                  
+                          }
+			  			
 		  }
 		  catch (EOFException e){
 		  }
 		  ips.close(); 
+                  IJ.log("Timer tags = "+ timerTag);
+                  
+                  
+                  
+                  
 	  }
 	  catch (Exception e){
 	  }
 	  return mpa;
+        
   }
 
   //getters
@@ -229,7 +240,9 @@ public class listFiles{
 	  int ct=0;
 	  for (int i=0;i<16;i++){
 	      if (i!=(adcIndexScanX) & i!=(adcIndexScanY)){
-		  if (evt[i]>0){
+                    //replace condition for coincidence on adc 15 and 16
+                    if (evt[i]>0){
+                    //if (evt[14]>0 & evt[15]>0){
 			  int [] event=new int[3];
 			  //X value, Y value, Energy
 			  event[0]=evt[adcIndexScanY];
@@ -238,9 +251,12 @@ public class listFiles{
 			  mpa.getADC(i).addEvent(event);
 			  
 			  ct+=1;
+//test for extreme values 4095 instead of 1024                          
+//if (event[2]>1024) IJ.log("voie :" + i + " Max energy = "+ event[2]);
 		  }
 	      }
 	  }
+          
 	  if (ct>0) return 0;
 	  else return 1;
   }

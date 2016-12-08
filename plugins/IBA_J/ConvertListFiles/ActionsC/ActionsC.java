@@ -199,7 +199,7 @@ public class ActionsC{
           
           if (flags[19]==1) rbs.saveChannelCountsSpectra(lF.setExtension("asc.dat"));
           if (flags[27]==1) rbs.saveXYEListFile(lF.setExtension("RBS"), (short)1);
-          else if (flags[16]==1) rbs.saveXYEListFile(lF.setExtension("rbs2"));
+          else if (flags[16]==1) rbs.saveXYEListFile(lF.setExtension("ADC"+Integer.toString(indexOfADC+1)+".rbs2"));
           if (flags[22]==1){
             String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": RBS - N counts = " +String.valueOf(rbs.getNEvents()); 
             plotSpectra(rbs.getSpectra(),title);
@@ -327,7 +327,8 @@ public class ActionsC{
   */
   public void processFile(int indexOfFile){
         MPA3 mpa=listFilesArray.get(indexOfFile).readListFile(getActiveADCs());
-        boolean debug = false;
+        boolean debug = true;
+        IJ.log("Reading file: "+ listFilesArray.get(indexOfFile).getPath());
         if (debug){
           int activeADCs[]=getActiveADCs();
           for (int i=0;i<activeADCs.length;i++){
@@ -339,8 +340,9 @@ public class ActionsC{
                       inactivePeriodsCounter++;
               }
               float inactivePeriodsCounterfl=inactivePeriodsCounter;
-              float tempsMort=inactivePeriodsCounterfl/totPeriods;
-              IJ.log("les périodes d'activation de "+indexOfAdc+" temps mort = "+tempsMort);
+              float tempsMort=100*inactivePeriodsCounterfl/totPeriods;
+              
+              if (indexOfAdc>7) IJ.log("Dead Time - ADC "+indexOfAdc+" = "+tempsMort +"%");
           }
         }
         for (int indexOfAdc=0;indexOfAdc<16;indexOfAdc++){
@@ -364,6 +366,7 @@ public class ActionsC{
                         break;
                 }
         }
+        IJ.log("Done.");
         java.lang.System.gc();
   }
   /**
