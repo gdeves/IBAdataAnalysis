@@ -357,8 +357,7 @@ public final class Spectra {
     
     for (int i=0;i<adc.getNEvents();i++){
       int[] event=adc.getEvent(i);
-      IJ.log("N maps : "+ rois.length);
-      
+           
         for (int j=0; j<rois.length;j++){
             int minRoiIndex = roiIndex[j][0];
             int maxRoiIndex = roiIndex[j][1];
@@ -367,7 +366,7 @@ public final class Spectra {
                 if (event[2]>=minRoiIndex && event[2]<=maxRoiIndex){
                     countPerPixel[j][event[0]-1+(event[1]-1)*(resX+1)]+=1;
                 }
-            } catch (Exception e){}
+            } catch (Exception e){IJ.log("** Warning** Event XYE "+event[0] + " " + event[1] + " " + event[2] + " in map " + j +" removed");}
             
         }
        
