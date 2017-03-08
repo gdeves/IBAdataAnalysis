@@ -102,7 +102,8 @@ public class CheckBoxListenerSp implements ItemListener,DocumentListener{
             g = colorRGB[1];
             b = colorRGB[2];
         }
-        colorToDraw = new Color(r,g,b);
+        colorToDraw = new Color(0,0,0);
+        //colorToDraw = new Color(r,g,b);
         marker.setPaint(colorToDraw);
         marker.setOutlinePaint(colorToDraw);
         // change line style (dashboard)

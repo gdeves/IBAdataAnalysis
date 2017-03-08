@@ -95,6 +95,7 @@ public class listFiles{
 		  int SynTag=0;
 		  int zevt=0;
 		  int tmp=0;
+                  
 		  
                   
 		  // b is a 4 bytes word
@@ -105,7 +106,8 @@ public class listFiles{
 		  // ADC[1] corresponds to bit 0
 		  int [] b=new int[4];
 		  try{
-                  	  b[0]=ips.readUnsignedByte();
+                  	                  
+                          b[0]=ips.readUnsignedByte();
 			  //loop until end of file is reached (b=-1)
                                                     //while (subFile<36000){subFile+=1;}
 			  while (b[0]>-1){
@@ -154,7 +156,10 @@ public class listFiles{
 						  for (int i=0;i<8;i++){
 							  if (checkBit(b[2],i)==1) evt[i+8]=safeBytesToInt(ips.readUnsignedByte(),ips.readUnsignedByte());
 						  }
-						  zevt+=sortEvents(mpa,evt);
+                                                  //Skipping n=200 events occuring at the beggining
+                                                   if (eventTag>000){
+                                                    zevt+=sortEvents(mpa,evt);
+                                                  }
                                                   //if (timerTag>108000 & timerTag<112000) zevt+=sortEvents(mpa,evt);
                                                   
 					  break;
@@ -241,8 +246,12 @@ public class listFiles{
 	  for (int i=0;i<16;i++){
 	      if (i!=(adcIndexScanX) & i!=(adcIndexScanY)){
                     //replace condition for coincidence on adc 15 and 16
-                    if (evt[i]>0){
-                    //if (evt[14]>0 & evt[15]>0){
+                  
+                    //Condition to remove defective' channels
+                    //if (evt[i]>0 & evt[i]!=192 & evt[i]!=448 & evt[i]!=704 & evt[i]!=3839 & evt[i]!=255 & evt[i]!=512 & evt[i]!=1024 & evt[i]!=4095){
+                          if (evt[i]>0){
+                          //if (evt[14]>0 & evt[15]>0){
+                        if (evt[adcIndexScanY]<256 & evt[adcIndexScanX]<256){
 			  int [] event=new int[3];
 			  //X value, Y value, Energy
 			  event[0]=evt[adcIndexScanY];
@@ -252,8 +261,9 @@ public class listFiles{
 			  
 			  ct+=1;
 //test for extreme values 4095 instead of 1024                          
-//if (event[2]>1024) IJ.log("voie :" + i + " Max energy = "+ event[2]);
-		  }
+if (i>7) IJ.log("voie :" + i + " X-Y-E = "+ event[0] +"-"+ event[1]+"-"+ event[2]);
+                    }
+                    }
 	      }
 	  }
           

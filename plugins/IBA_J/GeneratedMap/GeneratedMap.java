@@ -147,7 +147,7 @@ public class GeneratedMap {
         }   
         String nameFile=sourceSpectra.getPath();
         Spectra spectreNewCalc= new Spectra(adcToCalcFromRoi,nameFile,this);
-        spectreNewCalc.setLevel(sourceSpectra.getLevel()+1);
+        spectreNewCalc.setHeritage(true);
         spectreNewCalc.setParentWindow(sourceSpectra.getParentWindow());
         return spectreNewCalc;
       }

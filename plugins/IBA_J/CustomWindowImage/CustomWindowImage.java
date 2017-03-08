@@ -82,7 +82,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             sliceSelector.addAdjustmentListener(this); 
         }
         panel.add(new Label(""));
-        panel.add(nameRoiField);
+        //panel.add(nameRoiField);
         panel.add(buttonCalc);
         panel.add(buttonSave);
         panel.add(buttonSaveAll);
@@ -92,6 +92,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        RoiManager manager = RoiManager.getInstance();
         Object b = e.getSource();
         int z=0;
         if(selectedImages.length>1)

@@ -113,10 +113,10 @@ public class XYPlotSp extends JFrame {
         
         // get a reference to the plot for further customisation...
         final XYPlot plot = chart.getXYPlot();
-        plot.setBackgroundPaint(Color.lightGray);
+        plot.setBackgroundPaint(Color.white);
         //plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
+        plot.setDomainGridlinePaint(Color.lightGray);
+        plot.setRangeGridlinePaint(Color.lightGray);
         
         //code for points and no lines on the chart
         //final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
@@ -204,7 +204,7 @@ public class XYPlotSp extends JFrame {
         });
         
         jButtonSave = new JButton();
-        jButtonSave.setText(tr("Save"));
+        jButtonSave.setText("Save prefs");
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSaveActionPerformed(evt);
@@ -576,10 +576,12 @@ public class XYPlotSp extends JFrame {
     }
     
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        String directory=selectDirectory();
-        if(directory!=null){
-            drawSpectra.save(directory);
-        }
+        //String directory=selectDirectory();
+        //if(directory!=null){
+        //    drawSpectra.save(directory);
+        //}
+        PrefsManager prefs=new PrefsManager();
+        
     }
     
     /**

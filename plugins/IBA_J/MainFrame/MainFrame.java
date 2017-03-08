@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser; 
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *This class is the first window which will be open at the launch of IBA_J
@@ -80,7 +82,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jButtonLanguage = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("IBA analysis");
+        setTitle("IBA analysis - v12-2016-1");
 
         jButtonOpenLst.setText(tr("Handle raw listfiles"));
         jButtonOpenLst.addActionListener(new java.awt.event.ActionListener() {
@@ -538,7 +540,8 @@ public final class MainFrame extends javax.swing.JFrame {
           jF.setCurrentDirectory(myDir);
           jF.setApproveButtonText(tr("OK")); 
           jF.setMultiSelectionEnabled(false);
-
+          FileFilter filter = new FileNameExtensionFilter("PIXE AIFIRA file", "pixe2");
+          jF.setFileFilter(filter);
           jF.showOpenDialog(null); 
 
           selectedFile = jF.getSelectedFile();
