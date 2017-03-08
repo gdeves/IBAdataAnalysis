@@ -342,7 +342,7 @@ public class ActionsC{
               float inactivePeriodsCounterfl=inactivePeriodsCounter;
               float tempsMort=100*inactivePeriodsCounterfl/totPeriods;
               
-              if (indexOfAdc>7) IJ.log("Dead Time - ADC "+indexOfAdc+" = "+tempsMort +"%");
+              if (indexOfAdc>7) IJ.log("Dead Time - ADC "+(indexOfAdc+1) +" = "+tempsMort +"%");
           }
         }
         for (int indexOfAdc=0;indexOfAdc<16;indexOfAdc++){
