@@ -366,7 +366,7 @@ public class ActionsC{
                         break;
                 }
         }
-        IJ.log("Done.");
+        IJ.log("Processing files is done.");
         java.lang.System.gc();
   }
   /**

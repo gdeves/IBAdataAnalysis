@@ -175,24 +175,22 @@ public final class MainFrame extends javax.swing.JFrame {
 	ips=new DataInputStream(new BufferedInputStream(new FileInputStream(path))); 
          }
       catch (FileNotFoundException e){
-          IJ.log("File not found");
+          IJ.log("**Error** File was not found");
       }
         ADC adc=new ADC(path);
-        IJ.log("file: "+ path);
+        IJ.log("Opening file : "+ path);
         if (path.substring(path.length()-1).equals("2")){
-            IJ.log("now opening...");
+            IJ.log("Opening file : " + path);
             adc.open(ips);
         }
         else {
-            IJ.log("SupaVisio Type listfile are not supported any more...");
+            IJ.log("**Error** Wrong file format");
             try{
-            //adc.readSupaVisioTypeEventList(ips);
-                
+                           
             }
             catch (Exception e){}
         }
         try {
-            IJ.log("Done.");
             if (ips != null) ips.close(); 
         }
         catch(IOException e){}
@@ -314,7 +312,7 @@ public final class MainFrame extends javax.swing.JFrame {
           buff.close();
         }	
         catch(FileNotFoundException e){
-          IJ.log(tr("Error. Language file not found or invalid"));
+          IJ.log(tr("**Error** Language file not found or invalid"));
         }
         catch (NullPointerException e){//end of the file
           buff.close();
@@ -342,7 +340,7 @@ public final class MainFrame extends javax.swing.JFrame {
           }
         }	
         catch(FileNotFoundException e){
-          IJ.log(tr("Error. File not found."));
+          IJ.log(tr("**Error** File not found."));
         }
         catch (NullPointerException e){//end of the file
           arrayLines.remove(arrayLines.size()-1);
@@ -378,7 +376,7 @@ public final class MainFrame extends javax.swing.JFrame {
           
         }
         catch (HeadlessException e){
-          IJ.log(tr("Error"));
+          IJ.log(tr("**Error** Can not open file"));
         }
         if (selectedFile!=null)
             return selectedFile.getAbsolutePath();
@@ -405,7 +403,7 @@ public final class MainFrame extends javax.swing.JFrame {
           prefs.ijPrefsSaveDirectory(jF.getName());
         }
         catch (HeadlessException e){
-          IJ.log(tr("Error"));
+          IJ.log(tr("**Error** Can not open files"));
         }
         String[] pathsToReturn = null;
         if (selectedFiles!=null){

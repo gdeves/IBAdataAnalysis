@@ -414,10 +414,10 @@ public final class Spectra {
             adc.saveXYEListFile(file);
         } 
         catch(FileNotFoundException e){
-            IJ.log(tr("Saving file failure")+" "+directory);
+            IJ.log(tr("**Error** "+ e.toString()));
         }
         catch(IOException e2){
-            IJ.log(tr("Saving file failure"));
+            IJ.log(tr("**Error** "+ e2.toString()));
         }
         try{
             if (file!=null) {
@@ -425,7 +425,7 @@ public final class Spectra {
             }   
         }
         catch(IOException e){
-            IJ.log(tr("Saving file failure"));
+            IJ.log(tr("**Error** "+ e.toString()));
         }
     }
     

@@ -98,7 +98,7 @@ public class ADC{
 
             }
             catch (Exception e){
-            IJ.log(e.toString());
+            IJ.log("**Error** " + e.toString());
             }
             return spectra;
     }
@@ -118,7 +118,7 @@ public class ADC{
                     }
             }
             catch (Exception e){
-                    IJ.log(e.toString());
+                    IJ.log("**Error** " +e.toString());
             }
             return spectra;
     }
@@ -410,12 +410,12 @@ public class ADC{
                         map.get(index).add((int)getE(i));
                     }
                     catch(Exception e){
-                        IJ.log("map.g "+e.toString());
+                        IJ.log("**Error** " +e.toString());
                     }
                 }
             }
             catch (Exception e){
-                IJ.log(e.toString());
+                IJ.log("**Error** " + e.toString());
             }
             for (int i=1;i<map.size();i++){
                 java.util.Collections.sort(map.get(i));

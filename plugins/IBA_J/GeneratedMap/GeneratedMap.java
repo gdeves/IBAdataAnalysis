@@ -74,7 +74,7 @@ public class GeneratedMap {
         System.arraycopy(otherImagesToShow, 0, tabOfImgGen, 1, otherImagesToShow.length);
         imgWindow = new CustomWindowImage(ipOfImageGen,tabOfImgGen);
       }
-      catch(InvalidAttributeValueException e){IJ.log(tr("Error"));}
+      catch(InvalidAttributeValueException e){IJ.log(tr("**Error**" + e.toString()));}
   }
   
   /**
@@ -152,7 +152,7 @@ public class GeneratedMap {
         return spectreNewCalc;
       }
       else{
-          IJ.log(tr("Please make a selection"));
+          IJ.log(tr("**Error** No selection"));
           return null;
       }
   }
@@ -180,7 +180,7 @@ public class GeneratedMap {
             }
         }
         catch (IOException e) {
-            IJ.log(tr("Fail to save"));
+            IJ.log(tr("**Error** Saving failed"));
         }
         finally {
            try {
@@ -189,7 +189,7 @@ public class GeneratedMap {
                }
            } 
            catch (IOException e2) {
-               IJ.log(tr("Fail to save"));
+               IJ.log(tr("**Error** Saving failed"));
            }
         } 
   }
