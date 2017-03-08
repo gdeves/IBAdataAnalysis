@@ -75,10 +75,6 @@ public final class MainFrame extends javax.swing.JFrame {
         jButtonOpenXYEList = new javax.swing.JButton();
         jButtonParamLst = new javax.swing.JButton();
         jButtonParamPIXE = new javax.swing.JButton();
-        jButtonSaveSession = new javax.swing.JButton();
-        jButtonParamSaveSession = new javax.swing.JButton();
-        jButtonRestore = new javax.swing.JButton();
-        jButtonParamRestore = new javax.swing.JButton();
         jButtonLanguage = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -112,34 +108,6 @@ public final class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jButtonSaveSession.setText(tr("Save working session"));
-        jButtonSaveSession.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSaveSessionActionPerformed(evt);
-            }
-        });
-
-        jButtonParamSaveSession.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/images/avance-parametres-32.png"))); // NOI18N
-        jButtonParamSaveSession.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonParamSaveSessionActionPerformed(evt);
-            }
-        });
-
-        jButtonRestore.setText(tr("Restore  working session"));
-        jButtonRestore.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonRestoreActionPerformed(evt);
-            }
-        });
-
-        jButtonParamRestore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/images/avance-parametres-32.png"))); // NOI18N
-        jButtonParamRestore.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonParamRestoreActionPerformed(evt);
-            }
-        });
-
         jButtonLanguage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/language/source.png"))); // NOI18N
         jButtonLanguage.setBorderPainted(false);
         jButtonLanguage.addActionListener(new java.awt.event.ActionListener() {
@@ -156,19 +124,9 @@ public final class MainFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(49, 49, 49)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonOpenXYEList, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButtonParamPIXE, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonSaveSession, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButtonParamSaveSession, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButtonRestore, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButtonParamRestore, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jButtonOpenXYEList, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonParamPIXE, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -194,14 +152,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonOpenXYEList)
                     .addComponent(jButtonParamPIXE, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonSaveSession)
-                    .addComponent(jButtonParamSaveSession, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonRestore)
-                    .addComponent(jButtonParamRestore, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
         );
 
         pack();
@@ -260,136 +211,14 @@ public final class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonOpenXYEListActionPerformed
 
     private void jButtonParamPIXEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonParamPIXEActionPerformed
-        IJ.log(tr("No settings available for the moment"));
+        IJ.open("IJ_Prefs.txt");
     }//GEN-LAST:event_jButtonParamPIXEActionPerformed
-
-    private void jButtonSaveSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveSessionActionPerformed
-        if(spectrasProduced.size()>0){
-            String directory=selectDirectory();
-            ArrayList<String> nameSpectra = new ArrayList<>();
-            ArrayList<String[]> nameImgGen = new ArrayList<>();
-            if (directory!=null){
-                for (Spectra spectrasProduced1 : spectrasProduced) {
-                    spectrasProduced1.save(directory);
-                    String currentNameToSave = spectrasProduced1.getNameToSave();
-                    if (!nameSpectra.contains(currentNameToSave)) {
-                        nameSpectra.add(currentNameToSave);
-                        if (saveImagesOfSession) {
-                            nameImgGen.add(spectrasProduced1.saveAllImgGen(directory));
-                        }
-                    }
-                }
-                saveSession(directory,nameSpectra,nameImgGen);
-            }
-        }
-    }//GEN-LAST:event_jButtonSaveSessionActionPerformed
-
-    private void jButtonParamSaveSessionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonParamSaveSessionActionPerformed
-        frameConfigSaveSession.setVisible(true);
-    }//GEN-LAST:event_jButtonParamSaveSessionActionPerformed
-
-    private void jButtonRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRestoreActionPerformed
-        String[] paths = selectFiles();
-        for (String path : paths) {
-            if(path.contains("sess.spj")){
-                restoreSession(path);
-            }
-            else if(path.contains("spct.spj")){
-                Spectra spectToRestore = new Spectra(path,this);
-                spectToRestore.plotSpectra(nameOfApplication, (String)  tr("Spectra")+" "+spectToRestore.getPath()).showVisible();
-            }
-            else if(path.contains("img.spj")){
-                int index=path.lastIndexOf("/")+1;
-                if (index==0)
-                    index=path.lastIndexOf("\\")+1;
-                String nameSourceSpectra = path.substring(index,path.lastIndexOf("_"));
-                Spectra sourceSpectra=null;
-                for (Spectra currentSpct : spectrasProduced) {
-                    if (currentSpct.getPath().equals(nameSourceSpectra)){
-                        sourceSpectra=currentSpct;
-                    }
-                }
-                if (sourceSpectra==null){
-                    String directory = path.substring(0, index);
-                    String nameToSave = nameSourceSpectra+".spct.spj";
-                    sourceSpectra=new Spectra(directory+nameToSave, this);
-                    sourceSpectra.plotSpectra(nameOfApplication, (String) tr("Spectra")+" "+sourceSpectra.getPath());
-                }
-                sourceSpectra.restoreImgGen(path);
-            }
-        }
-    }//GEN-LAST:event_jButtonRestoreActionPerformed
-
-    private void jButtonParamRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonParamRestoreActionPerformed
-        IJ.log(tr("Uncoded feature for the moment"));
-    }//GEN-LAST:event_jButtonParamRestoreActionPerformed
 
     private void jButtonLanguageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLanguageActionPerformed
         frameConfigLang.setVisible(true);
     }//GEN-LAST:event_jButtonLanguageActionPerformed
 
-    /**
-     * This method will save the session (meaning all Spectras produced since the launch) in the given directory.
-     * The ImageGenerated objects will be save if the user has changed the saving settings.
-     * @param directory absolute path to the directory where all files will be saved
-     * @param nameSpectra an arrayList of names of the saved Spectras
-     * @param nameImgGen an arrayList of names of the saved ImageGenerateds
-     */
-    private void saveSession(String directory,ArrayList<String> nameSpectra,ArrayList<String[]> nameImgGen){
-        Calendar currentDate = Calendar.getInstance();
-        String year = String.valueOf(currentDate.get(Calendar.YEAR));
-        String month = String.valueOf(currentDate.get(Calendar.MONTH)+1);
-        String day = String.valueOf(currentDate.get(Calendar.DAY_OF_MONTH));
-        String hour = String.valueOf(currentDate.get(Calendar.HOUR_OF_DAY));
-        String min = String.valueOf(currentDate.get(Calendar.MINUTE));
-        String sec = String.valueOf(currentDate.get(Calendar.SECOND));
-        String fileName = day+"-"+month+"-"+year+"_"+hour+"h"+min+"m"+sec+"s.sess.spj";
-        String path = directory+fileName;
-        try{
-            BufferedWriter buff = new BufferedWriter(new FileWriter(path,false));//Création du fichier si non existant et append=false si existant
-            for (int i=0;i<nameSpectra.size();i++){
-                buff.write(nameSpectra.get(i));
-                buff.write("\n");
-                if(saveImagesOfSession){
-                    for (String get : nameImgGen.get(i)) {
-                        buff.write(get);
-                        buff.write("\n");
-                    }
-                }
-            }
-            buff.flush();   // buffer is released
-            buff.close();   // buffer & stream are closed.    
-        }
-        catch(IOException e){
-            IJ.log(tr("Fail to save the session Spj"));
-        }
-    }
     
-    /**
-     * restore a file session (*.sess.spj) and all the files mentionned in this session
-     * @param path absolute path to the file session
-     */
-    private void restoreSession(String path){
-        try{
-            String[] readLines=readLinesFile(path);
-            int index=path.lastIndexOf("/")+1;
-            if (index==0)
-                index=path.lastIndexOf("\\")+1;
-            String directory=path.substring(0,index);
-            for (String readLine : readLines) {
-                if (readLine.contains("spct")){
-                    Spectra spectToRestore = new Spectra(directory+readLine,this);
-                    spectToRestore.plotSpectra(nameOfApplication,  (String) tr("Spectra")+" "+spectToRestore.getPath()).showVisible();
-                }
-                else if (readLine.contains("img")){
-                    Spectra sourceSpectra = spectrasProduced.get(spectrasProduced.size()-1);
-                    sourceSpectra.restoreImgGen(directory+readLine);
-                }
-            }
-            
-        }
-        catch(IOException e){}
-    }
     
     
     private void searchAvailableLanguages(){
@@ -627,9 +456,5 @@ public final class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonOpenXYEList;
     private javax.swing.JButton jButtonParamLst;
     private javax.swing.JButton jButtonParamPIXE;
-    private javax.swing.JButton jButtonParamRestore;
-    private javax.swing.JButton jButtonParamSaveSession;
-    private javax.swing.JButton jButtonRestore;
-    private javax.swing.JButton jButtonSaveSession;
     // End of variables declaration//GEN-END:variables
 }
