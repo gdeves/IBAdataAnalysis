@@ -24,11 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -36,7 +32,7 @@ import javax.swing.JTextField;
 public class CustomWindowImage extends StackWindow implements ActionListener,AdjustmentListener{
     
     private Button buttonCalc;
-    private Button buttonSave;
+    private Button buttonRoiCalculation;
     private Button buttonSaveAll;
     private JLabel imageName;
     private JTextField nameRoiField;
@@ -68,12 +64,8 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         panel.setLayout(new GridLayout(nbFields,1));
         nameRoiField = new JTextField();
         nameRoiField.setText(tr("ROI name"));
-        buttonCalc = new Button(tr("Calculate spectra"));
-        buttonCalc.addActionListener(this);
-        buttonSave = new Button("Calculate all spectra");
-        buttonSave.addActionListener(this);
-        buttonSaveAll = new Button(tr("Save All"));
-        buttonSaveAll.addActionListener(this);
+        buttonRoiCalculation = new Button("Calculate ROI spectra");
+        buttonRoiCalculation.addActionListener(this);
         imageName = new JLabel();
         imageName.setText(selectedImages[0].getTitle());
         panel.add(imageName);
@@ -82,10 +74,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             sliceSelector.addAdjustmentListener(this); 
         }
         panel.add(new Label(""));
-        //panel.add(nameRoiField);
-        panel.add(buttonCalc);
-        panel.add(buttonSave);
-        panel.add(buttonSaveAll);
+        panel.add(buttonRoiCalculation);
         add(panel);
         pack();  
     }
@@ -98,14 +87,8 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         if(selectedImages.length>1)
             z = zSelector.getValue()-1; 
         
-        if (b==buttonCalc) {
-            manager.add(imp,imp.getRoi(),manager.getCount()+1);
-            IJ.log("calculating spectra from ROI "+manager.getName(manager.getCount()-1));
-            Spectra roiSpectra=selectedImages[0].generateSpectraFromRoi();
-            roiSpectra.setFilename(roiSpectra.getPath(manager.getName(manager.getCount()-1)));
-            roiSpectra.plotSpectra((String)"Spectra from ROI: "+manager.getName(manager.getCount()-1), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
-        }
-        if (b==buttonSave) {
+        
+        if (b==buttonRoiCalculation) {
                            
             for (int index=0; index<manager.getCount();index++){
                 manager.select(index);
@@ -118,12 +101,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             
             } 
         }
-        if (b==buttonSaveAll) {
-            //save all images generate from parent Spectra
-            String directory=selectDirectory();
-            if (directory!=null)
-                selectedImages[z].saveAll(directory);
-        }
+        
         ImageCanvas imageCanvas = imp.getCanvas();
         if (imageCanvas!=null)
             imageCanvas.requestFocus();
