@@ -178,17 +178,14 @@ public final class MainFrame extends javax.swing.JFrame {
           IJ.log("**Error** File was not found");
       }
         ADC adc=new ADC(path);
-        IJ.log("Opening file : "+ path);
         if (path.substring(path.length()-1).equals("2")){
-            IJ.log("Opening file : " + path);
+            File f=new File(path);
+            IJ.log("Opening file : " + f.getName());
             adc.open(ips);
         }
         else {
             IJ.log("**Error** Wrong file format");
-            try{
-                           
-            }
-            catch (Exception e){}
+            
         }
         try {
             if (ips != null) ips.close(); 
@@ -203,6 +200,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 File f=new File(path);
                 int nROI=Integer.valueOf(prefs.ijGetValue("IBA.nROI", ""+5));
                 spectraXYE.plotSpectra(nameOfApplication, (String) tr("File: ")+f.getName(),nROI).showVisible();
+                IJ.log("Total events: " + spectraXYE.getADC().getNEvents());
             }
         }
         java.lang.System.gc();
