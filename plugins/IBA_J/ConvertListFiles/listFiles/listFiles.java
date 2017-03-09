@@ -253,15 +253,15 @@ public class listFiles{
                           //if (evt[14]>0 & evt[15]>0){
                         if (evt[adcIndexScanY]<256 & evt[adcIndexScanX]<256){
 			  int [] event=new int[3];
-			  //X value, Y value, Energy
-			  event[0]=evt[adcIndexScanY];
-			  event[1]=evt[adcIndexScanX];
+			  //Y value, X value, Energy
+			  event[0]=evt[adcIndexScanX];
+			  event[1]=evt[adcIndexScanY];
 			  event[2]=evt[i];
 			  mpa.getADC(i).addEvent(event);
 			  
 			  ct+=1;
-//test for extreme values 4095 instead of 1024                          
-if (i>7) IJ.log("voie :" + i + " X-Y-E = "+ event[0] +"-"+ event[1]+"-"+ event[2]);
+                            //test for extreme values 4095 instead of 1024                          
+                            //if (i>7) IJ.log("voie :" + i + " X-Y-E = "+ event[0] +"-"+ event[1]+"-"+ event[2]);
                     }
                     }
 	      }
