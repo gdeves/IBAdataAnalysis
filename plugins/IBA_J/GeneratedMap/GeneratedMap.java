@@ -31,10 +31,11 @@ public class GeneratedMap {
   CustomWindowImage imgWindow=null;//the window where the ImageGenerated will be show to the user
   
   
-  public GeneratedMap(Spectra spectra,double[] valNbEventPerXY,float start, float end,int resX,int resY) {
+  public GeneratedMap(Spectra spectra,double[] countPerPixel,float start, float end,int mapSizeX,int mapSizeY) {
     sourceSpectra=spectra;
-    sourcePixels=valNbEventPerXY;
-    imageProc = new FloatProcessor(resY+1,resX+1,valNbEventPerXY);
+    sourcePixels=countPerPixel;
+    //imageProc = new FloatProcessor(mapSizeY+1,mapSizeX+1,countPerPixel);
+    imageProc = new FloatProcessor(mapSizeY,mapSizeX,countPerPixel);
     startSpectra=start;
     endSpectra=end;
   }
@@ -193,13 +194,8 @@ public class GeneratedMap {
            }
         } 
   }
-   /**
-    * Saves all generated images from the parent Spectra to the given directory
-     * @param directory where all files have to be saved
-    */
-  public void saveAll(String directory){
-      sourceSpectra.saveAllImgGen(directory);
-  }        
+   
+         
   
   public String tr(String strToTranslate){
       return sourceSpectra.tr(strToTranslate);
