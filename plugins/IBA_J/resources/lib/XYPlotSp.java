@@ -239,7 +239,7 @@ public class XYPlotSp extends JFrame {
         int nbLines=nROI/3;
         if (nROI%3>0) nbLines+=1;
         int nbFieldsPerLine=3;
-        IJ.log("N retrieved ROI from Prefs : "+String.valueOf(nROI));
+        //IJ.log("N retrieved ROI from Prefs : "+String.valueOf(nROI));
         for (int i=0; i<nbLines;i++){
             
             SequentialGroup grp1 = layoutPanelFields.createSequentialGroup();
@@ -589,12 +589,12 @@ public class XYPlotSp extends JFrame {
      */
     private void jButtonSaveGupActionPerformed(java.awt.event.ActionEvent evt) {                                         
         String directory=selectDirectory();
-        IJ.log("Saving: ");
+        //IJ.log("Saving: ");
         if(directory!=null){
             File f=new File(drawSpectra.getPath());
             String nameToSave=f.getName()+".gup";
-            IJ.log("Name: "+nameToSave);
-            IJ.log("Path: "+directory+nameToSave);
+            IJ.log("File saved: "+nameToSave);
+            //IJ.log("Path: "+directory+nameToSave);
             drawSpectra.getADC().saveGupixSpectra(directory+nameToSave);
         }
     }
