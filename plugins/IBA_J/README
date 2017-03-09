@@ -14,7 +14,7 @@ For developers :
   Java 1.7 is required.
   You can open the directory containing ImageJ as a NetBeans Project (NetBeans--> Open a project). 
   Compilation :
-      All sources .java of SupavisioJ can be compiled from netbeans 7.4. (the easiest way)
+      All sources .java of IBA_J can be compiled from netbeans 8.0.2 (the easiest way)
       You can also compiled in a terminal by :
           1- move to the plugins directory using the terminal
           2- under Linux :  javac -cp .:./lib/jfreechart.jar:./lib/jcommon.jar:./lib/ij.jar:./lib ./IBA_J/resources/lib/file.java 
