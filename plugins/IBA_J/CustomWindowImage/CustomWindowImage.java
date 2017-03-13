@@ -28,21 +28,28 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-
+/**
+ * class to instantiate a stack with element maps adding supplementary buttons and information about chemical elements
+ * @author deves
+ */
 public class CustomWindowImage extends StackWindow implements ActionListener,AdjustmentListener{
     
-    private Button buttonCalc;
     private Button buttonRoiCalculation;
-    private Button buttonSaveAll;
     private JLabel imageName;
     private JTextField nameRoiField;
-    private final GeneratedMap[] selectedImages;
+    private final GeneratedMap[] stack;
     private RoiManager manager;
+    private int X, Y;
 
     // constructor
+    /**
+     * Instantiate a new stack of element maps
+     * @param imp
+     * @param selectedImages 
+     */
     public CustomWindowImage(ImagePlus imp, GeneratedMap[] selectedImages) {
         super(imp);
-        this.selectedImages = selectedImages;
+        this.stack = selectedImages;
         setLayout(new FlowLayout());
         if (selectedImages.length>1){
             remove(zSelector);
@@ -59,7 +66,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
     private void addPanel() {
         Panel panel = new Panel();
         int nbFields=6;
-        if (selectedImages.length>1)
+        if (stack.length>1)
             nbFields=7;
         panel.setLayout(new GridLayout(nbFields,1));
         nameRoiField = new JTextField();
@@ -67,9 +74,9 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         buttonRoiCalculation = new Button("Calculate ROI spectra");
         buttonRoiCalculation.addActionListener(this);
         imageName = new JLabel();
-        imageName.setText(selectedImages[0].getTitle());
+        imageName.setText(stack[0].getTitle());
         panel.add(imageName);
-        if (selectedImages.length>1){
+        if (stack.length>1){
             panel.add(sliceSelector);
             sliceSelector.addAdjustmentListener(this); 
         }
@@ -84,16 +91,16 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         RoiManager manager = RoiManager.getInstance();
         Object b = e.getSource();
         int z=0;
-        if(selectedImages.length>1)
+        if(stack.length>1)
             z = zSelector.getValue()-1; 
         
         
         if (b==buttonRoiCalculation) {
-                           
+            if (imp.getRoi() !=null) manager.add(imp,imp.getRoi(),manager.getCount()+1);              
             for (int index=0; index<manager.getCount();index++){
                 manager.select(index);
                 IJ.log("calculating spectra from ROI "+manager.getName(index));
-                Spectra roiSpectra=selectedImages[0].generateSpectraFromRoi();
+                Spectra roiSpectra=stack[0].roiSpectra();
                 roiSpectra.setFilename(roiSpectra.getPath(manager.getName(index)));
                 roiSpectra.plotSpectra((String)"Spectra from ROI: "+manager.getName(index), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
                 roiSpectra.getADC().saveGupixSpectra(roiSpectra.getPath()+".gup");
@@ -110,7 +117,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
     @Override
     public synchronized void adjustmentValueChanged(AdjustmentEvent adjEv) { 
         int z = zSelector.getValue(); 
-        String currentName = selectedImages[z-1].getTitle();
+        String currentName = stack[z-1].getTitle();
         imageName.setText(currentName);
         super.adjustmentValueChanged(adjEv);
     } 
@@ -118,24 +125,30 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
     @Override
     public void mouseWheelMoved(MouseWheelEvent mWEvent) {
         super.mouseWheelMoved(mWEvent);
-        if(selectedImages.length>1){
+        if(stack.length>1){
             int z = zSelector.getValue()-1; 
-            String currentName = selectedImages[z].getTitle();
+            String currentName = stack[z].getTitle();
             imageName.setText(currentName);
         }
         updateStatusbarValue();
     }
 
+    /**
+     *Function to show information about element yield at mouse position
+     * @param x
+     * @param y
+     */
     @Override
     public void mouseMoved(int x, int y) {
         int z=0;
-        if(selectedImages.length>1)
+        if(stack.length>1)
             z = zSelector.getValue()-1; 
-        IJ.showStatus(imp.getLocationAsString(x+1,y+1) + selectedImages[z].getValueAsString(x,y));
-	savex=x; savey=y;
+        IJ.showStatus(imp.getLocationAsString(x,y) + stack[z].getYield(x,y));
+	X=x;
+        Y=y;
     }
 	
-    private int savex, savey;
+    
     
     /**
      * Redisplays the (x,y) coordinates and pixel value (which may have changed) in the status bar. Called by the Next Slice and Previous Slice commands to update the z-coordinate and pixel value.
@@ -143,9 +156,9 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
 
     public void updateStatusbarValue() {
         int z=1;
-        if(selectedImages.length>1)
+        if(stack.length>1)
             z = zSelector.getValue(); 
-        IJ.showStatus(imp.getLocationAsString(savex+1,savey+1) + selectedImages[z-1].getValueAsString(savex,savey));
+        IJ.showStatus(imp.getLocationAsString(X,Y) + stack[z-1].getYield(X,Y));
     }
 
     
@@ -210,9 +223,13 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         return true;
     }
 
-    
-    public String tr(String strToTranslate){
-        return selectedImages[0].tr(strToTranslate);
+    /**
+     * Function to translate a string into french/english
+     * @param sentence
+     * @return the translated sentence
+     */
+    public String tr(String sentence){
+        return stack[0].tr(sentence);
     }
     
 } 
