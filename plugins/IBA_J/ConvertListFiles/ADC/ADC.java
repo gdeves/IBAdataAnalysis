@@ -20,12 +20,19 @@ public class ADC{
     private final Integer sizeMapX=256;
     private final Integer sizeMapY=256;
 
-    //ADC constructor
+    
+    /**
+     * ADC constructor with initialization of empty eventList ans median energy for STIM map
+     */
     public ADC(){
         eventList.add(new int[3]);
         median.add(0);
 
     }
+    /**
+     * ADC constructor with path initialization
+     * @param path path for the ADC
+     */
         public ADC(String path){
         eventList.add(new int[3]);
         median.add(0);
@@ -46,36 +53,59 @@ public class ADC{
     }
     
     //getter
-    
+    /**
+     * @return path for this ADC
+     */
     public String getPath(){
         return this.path;
     }
-
+    /**
+     * @param position in the eventList
+     * @return event for this postion
+     */
     public int[] getEvent(int position){
         return eventList.get(position);
     }
     
+    /**
+     * @return last event of the eventList (X, Y, E)
+     */
     public int[] getlastEvent(){
         return eventList.get(getNEvents()-1);
     }
-
+    /**
+     * @param position of event in the list
+     * remove event at the specified position
+     */
     public void removeEvent(int position){
         eventList.remove(position);
     }
-    
+    /**
+     * @return size of evetn list as a number of events
+     */
     public int getNEvents(){
         return eventList.size();
     }
-
+    
+    /**
+     * @param position of event in the event list
+     * @return number of periods at the event position ??
+     */
     public int getActivationPeriod(int position){
         return activationPeriods.get(position);
     }
 
+    /**
+     * @return total number of activation periods ??
+     */
     public int getNActivationPeriods(){
         return activationPeriods.size();
     }
-
-    // adds the value of the activation state
+    
+    /**
+     * adds the value of the activation state
+     */
+     
     public void addPeriod(int state){
         activationPeriods.add(state);
     }
@@ -170,8 +200,12 @@ public class ADC{
         }
         return max;
     }
-
-    public int getY(int event){
+    
+    /**
+     * @param event
+     * return Y position for event
+     */
+     public int getY(int event){
             int [] XYE=getEvent(event);
             return XYE[1];
     }
@@ -445,16 +479,18 @@ public class ADC{
             catch (IOException e){
             }
     }
-        public void saveMedianImage(String path){
-            ImagePlus imp = new ImagePlus();  
-            ImageProcessor ip = imp.getProcessor(); 
-            for (int x=2;x<sizeMapX;x++) {
-                for (int y=1;y<sizeMapY;y++){
-                    ip.set(x,y,median.get(x+sizeMapX*y));
-                }
-                           
+    /**
+     * Save median map as a TIFF file
+     * @param path for the saved file
+     */
+    public void saveMedianImage(String path){
+        ImagePlus imp = new ImagePlus();  
+        ImageProcessor ip = imp.getProcessor(); 
+        for (int x=2;x<sizeMapX;x++) {
+            for (int y=1;y<sizeMapY;y++){
+                ip.set(x,y,median.get(x+sizeMapX*y));
             }
-            IJ.saveAs(imp, "TIFF",path);
-                                 
-        }    
+        }
+        IJ.saveAs(imp, "TIFF",path);
+    }    
 }
