@@ -54,13 +54,11 @@
    </target>
    
    
+   
+   
    <target name="run" depends="build" description="Build and run ImageJ.">
-      <java maxmemory="640m" jar="ij.jar" fork="yes" />
-   </target>
-   
-   
-   <target name="run2" depends="build" description="Build and run ImageJ.">
-      <java classpath="ij.jar" fork="yes" classname="ij.ImageJ" />
+       <!--java maxmemory="640m" jar="ij.jar" fork="yes" /-->
+       <java maxmemory="4000m" classpath="ij.jar" fork="yes" classname="ij.ImageJ" />
    </target>
 
    <target name="myDebug" depends="build" description="Debug ImageJ.">
