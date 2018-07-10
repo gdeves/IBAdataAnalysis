@@ -10,16 +10,13 @@ import ij.IJ;
 import java.awt.HeadlessException;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -31,9 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public final class MainFrame extends javax.swing.JFrame {
     private FrameConfigLang frameConfigLang= null;
     private final FrameC frameConfigLst = new FrameC();
-    private final FrameConfigSave frameConfigSaveSession = new FrameConfigSave(this);
     private final ArrayList<Spectra> spectrasProduced = new ArrayList<>();
-    private boolean saveImagesOfSession = false;
     private final String nameOfApplication = "Ion Beam Data Analysis";
     private static ArrayList<String> availableLanguages = new ArrayList<>();
     private static ArrayList<String[]> languageData = new ArrayList<>();
@@ -58,9 +53,6 @@ public final class MainFrame extends javax.swing.JFrame {
                 .getResource("/IBA_J/resources/images" + "/atome-16.png")).getImage());
     }
     
-    public void setSaveImg(boolean saveImg){
-        saveImagesOfSession=saveImg;
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -78,16 +70,16 @@ public final class MainFrame extends javax.swing.JFrame {
         jButtonLanguage = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("IBA analysis - v12-2016-1");
+        setTitle("IBA analysis - v03-2017-1");
 
-        jButtonOpenLst.setText(tr("Handle raw listfiles"));
+        jButtonOpenLst.setText(translate("Handle raw listfiles"));
         jButtonOpenLst.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonOpenLstActionPerformed(evt);
             }
         });
 
-        jButtonOpenXYEList.setText(tr("Work with ADC listfile"));
+        jButtonOpenXYEList.setText(translate("Work with ADC listfile"));
         jButtonOpenXYEList.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonOpenXYEListActionPerformed(evt);
@@ -190,16 +182,19 @@ public final class MainFrame extends javax.swing.JFrame {
         try {
             if (ips != null) ips.close(); 
         }
-        catch(IOException e){}
+        catch(IOException e){
+            IJ.log("**Error ** " + e.toString());
+        }
             
 
-        if ( adc.getNEvents()>1 && (adc.getlastEvent()[0]!=0 && adc.getlastEvent()[1]!=0) ){//check if a correct file has been open
+        //if ( adc.getNEvents()>1 && (adc.getlastEvent()[0]!=0 && adc.getlastEvent()[1]!=0) ){//check if a correct file has been open
+        if ( adc.getNEvents()>1){
             Spectra spectraXYE= new Spectra(adc,path);
             if(spectraXYE.getEnergies().length>1){//check if a correct file has been open
                 spectraXYE.setParentWindow(this);
                 File f=new File(path);
                 int nROI=Integer.valueOf(prefs.ijGetValue("IBA.nROI", ""+5));
-                spectraXYE.plotSpectra(nameOfApplication, (String) tr("File: ")+f.getName(),nROI).showVisible();
+                spectraXYE.plot(nameOfApplication, (String) translate("File: ")+f.getName(),nROI).showVisible();
                 IJ.log("Total events: " + spectraXYE.getADC().getNEvents());
             }
         }
@@ -255,10 +250,19 @@ public final class MainFrame extends javax.swing.JFrame {
         jButtonLanguage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/language/"+language+".png")));
     }
     
+    /**
+     * Method to get the available languages
+     * @return available languages
+     */
     public String[] getLanguages(){
         return availableLanguages.toArray( new String[availableLanguages.size()] );
     }
     
+    /**
+     * Method to retrieve available languages
+     * @param languageName
+     * @return available languages
+     */
     public String getNameFileLang(String languageName){
         final File folder = new File("plugins/IBA_J/resources/language");//");
         File[] listOfFiles = folder.listFiles();
@@ -276,8 +280,12 @@ public final class MainFrame extends javax.swing.JFrame {
         }
         return "source";
     }
-    
-    public static String tr(String dataToTranslate){
+    /**
+     * 
+     * @param dataToTranslate
+     * @return a translated string
+     */
+    public static String translate(String dataToTranslate){
         if(dataToTranslate!=null){
             if(languageData.size()>1){
                 String[] source=languageData.get(0);
@@ -294,6 +302,12 @@ public final class MainFrame extends javax.swing.JFrame {
         return dataToTranslate;
     }
     
+    /**
+     * Method to retrieve used language
+     * @param path
+     * @return used language
+     * @throws IOException 
+     */
     public String readLanguageName(String path)throws IOException{
         BufferedReader buff=null;
         String languageName= null;
@@ -310,7 +324,7 @@ public final class MainFrame extends javax.swing.JFrame {
           buff.close();
         }	
         catch(FileNotFoundException e){
-          IJ.log(tr("**Error** Language file not found or invalid"));
+          IJ.log(translate("**Error** Language file not found or invalid"));
         }
         catch (NullPointerException e){//end of the file
           buff.close();
@@ -320,29 +334,31 @@ public final class MainFrame extends javax.swing.JFrame {
   
     /**
      * Method to read a text file
+     * @param path of the file
      * @return return an array containing the lines of file. "\n" has been removed.
+     * @throws IOException
      */
     public String[] readLinesFile(String path)throws IOException{
-        BufferedReader buff=null;
-        ArrayList<String> arrayLines=new ArrayList<String>();
+        BufferedReader br=null;
+        ArrayList<String> arrayLines=new ArrayList<>();
         try {
-          buff=buff = new BufferedReader(new FileReader(path));//file opening
+          br = new BufferedReader(new FileReader(path));//file opening
           for (int i=0;;i++) {
-            String line = buff.readLine();
+            String line = br.readLine();
             arrayLines.add(line);
             if (line.equals(null) | line.equals("\n")){//end of the file can produced a NullPointerException
               arrayLines.remove(arrayLines.size()-1);
-              buff.close();
+              br.close();
               break;
             }
           }
         }	
         catch(FileNotFoundException e){
-          IJ.log(tr("**Error** File not found."));
+          IJ.log(translate("**Error** File not found."));
         }
         catch (NullPointerException e){//end of the file
           arrayLines.remove(arrayLines.size()-1);
-          buff.close();
+          br.close();
         }
         String[] tabLines =  new String[arrayLines.size()];//convert arrayList to String[]
         for (int i=0;i<arrayLines.size();i++){
@@ -362,11 +378,15 @@ public final class MainFrame extends javax.swing.JFrame {
         try{
           JFileChooser jF = new JFileChooser();
           File myDir=new File(prefs.ijGetLastUsedDirectory());
+          jF.addChoosableFileFilter(new FileNameExtensionFilter("PIXE AIFIRA file", "pixe2"));
+          jF.addChoosableFileFilter(new FileNameExtensionFilter("RBS AIFIRA file", "rbs2"));
+          jF.setFileFilter(jF.getChoosableFileFilters()[1]);
+
           jF.setCurrentDirectory(myDir);
-          jF.setApproveButtonText(tr("OK")); 
+          jF.setApproveButtonText(translate("OK")); 
           jF.setMultiSelectionEnabled(false);
-          FileFilter filter = new FileNameExtensionFilter("PIXE AIFIRA file", "pixe2");
-          jF.setFileFilter(filter);
+          //FileFilter filter = new FileNameExtensionFilter("PIXE AIFIRA file", "pixe2");
+          //jF.setFileFilter(filter);
           jF.showOpenDialog(null); 
 
           selectedFile = jF.getSelectedFile();
@@ -374,7 +394,7 @@ public final class MainFrame extends javax.swing.JFrame {
           
         }
         catch (HeadlessException e){
-          IJ.log(tr("**Error** Can not open file"));
+          IJ.log(translate("**Error** Can not open file"));
         }
         if (selectedFile!=null)
             return selectedFile.getAbsolutePath();
@@ -393,7 +413,7 @@ public final class MainFrame extends javax.swing.JFrame {
         try{
           JFileChooser jF = new JFileChooser();
           File myDir=new File(prefs.ijGetLastUsedDirectory());
-          jF.setApproveButtonText(tr("OK")); 
+          jF.setApproveButtonText(translate("OK")); 
           jF.setMultiSelectionEnabled(true);
 
           jF.showOpenDialog(null); 
@@ -401,7 +421,7 @@ public final class MainFrame extends javax.swing.JFrame {
           prefs.ijPrefsSaveDirectory(jF.getName());
         }
         catch (HeadlessException e){
-          IJ.log(tr("**Error** Can not open files"));
+          IJ.log(translate("**Error** Can not open files"));
         }
         String[] pathsToReturn = null;
         if (selectedFiles!=null){
@@ -424,7 +444,7 @@ public final class MainFrame extends javax.swing.JFrame {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        int option = fileChooser.showDialog(null,tr("Choose a directory"));
+        int option = fileChooser.showDialog(null,translate("Choose a directory"));
         if (option == JFileChooser.APPROVE_OPTION) {
             selectedFile = fileChooser.getSelectedFile();
              // if the user accidently click a file, then select the parent directory.
