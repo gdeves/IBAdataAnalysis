@@ -19,26 +19,30 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.ui.RectangleEdge;
 
+/**
+ *
+ * @author deves
+ */
 public class CustomChartPanel extends ChartPanel implements MouseListener { 
 
-    private XYPlotSp parentXYPlotSp; 
+    private FrameSpectra parentFrameSpectra; 
     private JFreeChart chart = null; 
-    private float startValueX;
-    private boolean pressShift=false;
+    private float minimum;
+    private boolean shiftDown=false;
 
     /** 
     * constructor 
     * @param chart 
-     * @param parentXYPlotSp 
+     * @param parentFrameSpectra 
     */ 
-    public CustomChartPanel(JFreeChart chart, XYPlotSp parentXYPlotSp) { 
+    public CustomChartPanel(JFreeChart chart, FrameSpectra parentFrameSpectra) { 
       super(chart); 
       this.chart = chart;  
-      this.parentXYPlotSp=parentXYPlotSp;
+      this.parentFrameSpectra=parentFrameSpectra;
     } 
 
     private boolean isACheckBoxSelected(){
-        return !parentXYPlotSp.getSelectedCheckBox().isEmpty();
+        return !parentFrameSpectra.getSelectedCheckBox().isEmpty();
     }
     
     /** 
@@ -47,11 +51,11 @@ public class CustomChartPanel extends ChartPanel implements MouseListener {
     * @param mEvt information about the event. 
     */ 
     public void mousePressed(MouseEvent mEvt) { 
-      pressShift = (mEvt.getModifiers() & InputEvent.SHIFT_MASK) != 0;
-      if (isACheckBoxSelected() && !pressShift) { 
+      shiftDown = (mEvt.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+      if (isACheckBoxSelected() && !shiftDown) { 
         setMouseZoomable(false,true); //zoom desactivation
         super.mousePressed(mEvt);//call to the initial method 
-        startValueX = getPointInChart(mEvt,false); //to have correspondance with actual values
+        minimum = getPointInChart(mEvt,false); //to have correspondance with actual values
         setMouseZoomable(true,false); //zomm activation
       } 
       else{ 
@@ -65,7 +69,7 @@ public class CustomChartPanel extends ChartPanel implements MouseListener {
     * @param mEvt information about the event. 
     */ 
     public void mouseReleased(MouseEvent mEvt) { 
-      if (isACheckBoxSelected() && !pressShift) {  
+      if (isACheckBoxSelected() && !shiftDown) {  
 	setMouseZoomable(false,true); 
 	super.mouseReleased(mEvt); 
         float endValueX = getPointInChart(mEvt,true);
@@ -77,17 +81,21 @@ public class CustomChartPanel extends ChartPanel implements MouseListener {
       } 
     } 
     
+    /**
+     *
+     * @param endValueX
+     */
     public void update(float endValueX){
-        JCheckBox checkBoxToChange = parentXYPlotSp.getLastActivatedCheckBox();
+        JCheckBox checkBoxToChange = parentFrameSpectra.getLastActivatedCheckBox();
         if (!checkBoxToChange.isSelected()){
-            ArrayList<JCheckBox> checkBoxsSelected = parentXYPlotSp.getSelectedCheckBox();
+            ArrayList<JCheckBox> checkBoxsSelected = parentFrameSpectra.getSelectedCheckBox();
             int nbOfCheckBox = checkBoxsSelected.size();
             checkBoxToChange = checkBoxsSelected.get(nbOfCheckBox-1);
         }
-        JTextField minField = parentXYPlotSp.getField(checkBoxToChange,"Min");
-        JTextField maxField = parentXYPlotSp.getField(checkBoxToChange,"Max");
-        if (startValueX<=endValueX){
-            minField.setText(String.valueOf(startValueX));
+        JTextField minField = parentFrameSpectra.getField(checkBoxToChange,"Min");
+        JTextField maxField = parentFrameSpectra.getField(checkBoxToChange,"Max");
+        if (minimum<=endValueX){
+            minField.setText(String.valueOf(minimum));
             maxField.setText(String.valueOf(endValueX));
         }
         //parentXYPlotSp.updateLinesOnChart(checkBoxToChange);
@@ -117,7 +125,7 @@ public class CustomChartPanel extends ChartPanel implements MouseListener {
       double chartX = domainAxis.java2DToValue(pointOfInterest.getX(), dataArea, domainAxisEdge); 
       double chartY = rangeAxis.java2DToValue(pointOfInterest.getY(), dataArea, rangeAxisEdge); 
       //here we want only chartX
-      float valueX=parentXYPlotSp.getRealXValue(chartX,rightIncluded);
+      float valueX=parentFrameSpectra.getRealXValue(chartX,rightIncluded);
       return valueX;
     } 
 

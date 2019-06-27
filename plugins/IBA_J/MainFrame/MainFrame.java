@@ -4,6 +4,7 @@ import IBA_J.ConvertListFiles.ADC.ADC;
 import IBA_J.ConvertListFiles.FrameC.FrameC;
 import IBA_J.FrameConfigSave.FrameConfigSave;
 import IBA_J.FrameConfigLang.FrameConfigLang;
+import IBA_J.FrameAbout.FrameAbout;
 import IBA_J.Prefs.PrefsManager;
 import IBA_J.Spectra.Spectra;
 import ij.IJ;
@@ -21,6 +22,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.Desktop;
+import java.net.URI;
+
 
 /**
  *This class is the first window which will be open at the launch of IBA_J
@@ -32,6 +36,8 @@ public final class MainFrame extends javax.swing.JFrame {
     private final String nameOfApplication = "Ion Beam Data Analysis";
     private static ArrayList<String> availableLanguages = new ArrayList<>();
     private static ArrayList<String[]> languageData = new ArrayList<>();
+    private final FrameAbout frmAbout=new FrameAbout();
+    
 
     /**
      * Creates new form MainFrame
@@ -63,14 +69,21 @@ public final class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        bG_language = new javax.swing.ButtonGroup();
         jButtonOpenLst = new javax.swing.JButton();
         jButtonOpenXYEList = new javax.swing.JButton();
         jButtonParamLst = new javax.swing.JButton();
         jButtonParamPIXE = new javax.swing.JButton();
-        jButtonLanguage = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu_file = new javax.swing.JMenu();
+        jMenu_open = new javax.swing.JMenuItem();
+        jMenu_exit = new javax.swing.JMenuItem();
+        jMenu_info = new javax.swing.JMenu();
+        jMenu_helpContent = new javax.swing.JMenuItem();
+        jMenu_about = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("IBA analysis - v03-2017-1");
+        setTitle("IBA analysis - v2019-07-26");
 
         jButtonOpenLst.setText(translate("Handle raw listfiles"));
         jButtonOpenLst.addActionListener(new java.awt.event.ActionListener() {
@@ -87,6 +100,8 @@ public final class MainFrame extends javax.swing.JFrame {
         });
 
         jButtonParamLst.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/images/avance-parametres-32.png"))); // NOI18N
+        jButtonParamLst.setText("Configure input & output");
+        jButtonParamLst.setActionCommand("");
         jButtonParamLst.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonParamLstActionPerformed(evt);
@@ -94,57 +109,84 @@ public final class MainFrame extends javax.swing.JFrame {
         });
 
         jButtonParamPIXE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/images/avance-parametres-32.png"))); // NOI18N
+        jButtonParamPIXE.setText("Preferences (IJ_Prefs.txt)");
+        jButtonParamPIXE.setAutoscrolls(true);
         jButtonParamPIXE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonParamPIXEActionPerformed(evt);
             }
         });
 
-        jButtonLanguage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/language/source.png"))); // NOI18N
-        jButtonLanguage.setBorderPainted(false);
-        jButtonLanguage.addActionListener(new java.awt.event.ActionListener() {
+        jMenu_file.setText("File");
+        jMenu_file.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonLanguageActionPerformed(evt);
+                jMenu_fileActionPerformed(evt);
             }
         });
+
+        jMenu_open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenu_open.setText("Open List files");
+        jMenu_open.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu_openActionPerformed(evt);
+            }
+        });
+        jMenu_file.add(jMenu_open);
+
+        jMenu_exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
+        jMenu_exit.setText("Exit");
+        jMenu_file.add(jMenu_exit);
+
+        jMenuBar1.add(jMenu_file);
+
+        jMenu_info.setText("Help");
+
+        jMenu_helpContent.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        jMenu_helpContent.setText("Help Content");
+        jMenu_helpContent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu_helpContentActionPerformed(evt);
+            }
+        });
+        jMenu_info.add(jMenu_helpContent);
+
+        jMenu_about.setText("About IBA_J...");
+        jMenu_about.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu_aboutActionPerformed(evt);
+            }
+        });
+        jMenu_info.add(jMenu_about);
+
+        jMenuBar1.add(jMenu_info);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(88, 88, 88)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addComponent(jButtonOpenXYEList, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonParamPIXE, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(49, 49, 49)
-                                .addComponent(jButtonOpenLst, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jButtonLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonParamLst, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(53, Short.MAX_VALUE))
+                    .addComponent(jButtonOpenXYEList, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonOpenLst, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonParamLst, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonParamPIXE, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(83, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButtonLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonOpenLst)
-                    .addComponent(jButtonParamLst, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonOpenXYEList)
-                    .addComponent(jButtonParamPIXE, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20))
+                .addContainerGap()
+                .addComponent(jButtonParamLst)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonOpenLst, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonParamPIXE, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonOpenXYEList, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -202,12 +244,34 @@ public final class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonOpenXYEListActionPerformed
 
     private void jButtonParamPIXEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonParamPIXEActionPerformed
-        IJ.open("IJ_Prefs.txt");
+        IJ.run("Text File... ", "open=D:\\Plugins\\NetBeansIJSupJ-masterv0.5\\IJ_Prefs.txt");
+        
     }//GEN-LAST:event_jButtonParamPIXEActionPerformed
 
-    private void jButtonLanguageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLanguageActionPerformed
-        frameConfigLang.setVisible(true);
-    }//GEN-LAST:event_jButtonLanguageActionPerformed
+    private void jMenu_fileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_fileActionPerformed
+      // TODO add your handling code here:
+    }//GEN-LAST:event_jMenu_fileActionPerformed
+
+    private void jMenu_openActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_openActionPerformed
+        frameConfigLst.openLST();
+        
+    }//GEN-LAST:event_jMenu_openActionPerformed
+
+    private void jMenu_aboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_aboutActionPerformed
+        frmAbout.setVisible(true);
+    }//GEN-LAST:event_jMenu_aboutActionPerformed
+
+    private void jMenu_helpContentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_helpContentActionPerformed
+        
+        try {
+            
+            File htmlFile = new File("plugins/IBA_J/Help/IBA_Help.htm");
+            Desktop.getDesktop().browse(htmlFile.toURI());
+            
+            } catch (Exception e) {
+                IJ.log(e.toString());
+            }
+    }//GEN-LAST:event_jMenu_helpContentActionPerformed
 
     
     
@@ -247,7 +311,7 @@ public final class MainFrame extends javax.swing.JFrame {
     }
     
     private void chooseIconLanguage(String language){
-        jButtonLanguage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/language/"+language+".png")));
+        //jButtonLanguage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IBA_J/resources/language/"+language+".png")));
     }
     
     /**
@@ -415,7 +479,7 @@ public final class MainFrame extends javax.swing.JFrame {
           File myDir=new File(prefs.ijGetLastUsedDirectory());
           jF.setApproveButtonText(translate("OK")); 
           jF.setMultiSelectionEnabled(true);
-
+          
           jF.showOpenDialog(null); 
           selectedFiles = jF.getSelectedFiles();
           prefs.ijPrefsSaveDirectory(jF.getName());
@@ -467,10 +531,17 @@ public final class MainFrame extends javax.swing.JFrame {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonLanguage;
+    private javax.swing.ButtonGroup bG_language;
     private javax.swing.JButton jButtonOpenLst;
     private javax.swing.JButton jButtonOpenXYEList;
     private javax.swing.JButton jButtonParamLst;
     private javax.swing.JButton jButtonParamPIXE;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenu_about;
+    private javax.swing.JMenuItem jMenu_exit;
+    private javax.swing.JMenu jMenu_file;
+    private javax.swing.JMenuItem jMenu_helpContent;
+    private javax.swing.JMenu jMenu_info;
+    private javax.swing.JMenuItem jMenu_open;
     // End of variables declaration//GEN-END:variables
 }

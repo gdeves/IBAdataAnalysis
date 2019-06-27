@@ -8,16 +8,13 @@ import ij.*;
 import IBA_J.Prefs.PrefsManager;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.File;
-import IBA_J.resources.lib.XYPlotSp;
+import IBA_J.resources.lib.FrameSpectra;
 
 
 /**
@@ -30,8 +27,8 @@ public final class Spectra {
   private float minEnergy=0;
   private int minChannel=0;
   private Float energySlope=null;//value of energy between two channels
-  private int mapSizeX=0; // useful if Spectra generated from an ImageGenerated
-  private int mapSizeY=0; // useful if Spectra generated from an ImageGenerated
+  private int width=0; // useful if Spectra generated from an ImageGenerated
+  private int height=0; // useful if Spectra generated from an ImageGenerated
   private String directory=null;// useful for saving and restoring
   private String filename =null; //if spectra is open from a file or a parent spectra
   private boolean isFromSprectraHeritated=false; //to know if the spectra has been produced from a spectra or a file (if file : level=0)
@@ -60,7 +57,7 @@ public final class Spectra {
     int nEvents=adc.getNEvents();
     //x=0 or y=0 is ignored with this code
     for(int j=0;j<nEvents;j++){
-        if(adc.getX(j)<0 || adc.getY(j)<0 || adc.getY(j)>255 || adc.getX(j)>255){
+        if(adc.getX(j)<0 || adc.getY(j)<0 || adc.getY(j)>1024 || adc.getX(j)>1024){
             adc.removeEvent(j);
             nEvents--;
         }
@@ -97,8 +94,8 @@ public final class Spectra {
     this.producedMaps = new ArrayList<>();
     //mapSizeX=generatedMap.getWidth()-1;
     //mapSizeY=generatedMap.getHeight()-1;
-    mapSizeX=generatedMap.getWidth();
-    mapSizeY=generatedMap.getHeight();
+    width=generatedMap.getWidth();
+    height=generatedMap.getHeight();
   }
   
   /**
@@ -114,8 +111,8 @@ public final class Spectra {
         this.producedMaps = new ArrayList<>();
     //mapSizeX=gMap.getWidth()-1;
     //mapSizeY=gMap.getHeight()-1;
-    mapSizeX=gMap.getWidth();
-    mapSizeY=gMap.getHeight();
+    width=gMap.getWidth();
+    height=gMap.getHeight();
   }
   
   @Override
@@ -125,59 +122,109 @@ public final class Spectra {
   }
   
   // getters & setters
+  /**
+   * Method to get an ADC
+   * @return ADC
+   */
   public ADC getADC (){
     return adc;
   }
-  
+  /**
+   * Method to get the directory used to save session
+   * @return directory
+   */
   public String getDirectory(){
       return directory;
   }
-  
+  /**
+   * Method to get the path corresponding to spectra
+   * @return 
+   */
   public String getPath(){
       if (!isFromSprectraHeritated)
         return filename;
       return filename;
   }
+  /**
+   * Method to get path for the corresponding spectra given a specified roi
+   * @param roiName
+   * @return 
+   */
   public String getPath(String roiName){
       if (!isFromSprectraHeritated)
         return filename;
       return filename+"-"+roiName;
   }
-    public String getFilename(){
+  /**
+   * Method to get filename (without path)
+   * @return name of the file
+   */
+  public String getFilename(){
         File f=new File(getPath());
         if (!isFromSprectraHeritated)
         return f.getName();
       return f.getName()+"-"+String.valueOf(1);
   }
+  /**
+   * Method to get the minimum channel of the corresponding spectra
+   * @return 
+   */
   public int getMinChannel(){
       return minChannel;
   }
   
-  
+  /**
+   * Method to known if the spectra was saved
+   * @return the name of the directory used for saving or null if not saved
+   */
   public boolean isSaved(){
       return directory!=null;
   }
-  
+  /**
+   * Method to know if a spectra was heritated from a roi
+   * @return 
+   */
   public boolean getHeritage(){
       return isFromSprectraHeritated;
-  } 
+  }
+  /**
+   * Method to set the filename
+   * @param filename 
+   */
   public void setFilename(String filename){
       this.filename=filename;
   }   
-  public void setHeritage(boolean isFromSpectraHeritated){
+  
+    /**
+     * Method to set Heritage for a spectra
+     * @param isFromSpectraHeritated
+     */
+    public void setHeritage(boolean isFromSpectraHeritated){
       this.isFromSprectraHeritated=isFromSpectraHeritated;
   }
   
-  public void setParentWindow(MainFrame parentWindow){
+    /**
+     * Method to set parent window
+     * @param parentWindow
+     */
+    public void setParentWindow(MainFrame parentWindow){
       Spectra.parentWindow=parentWindow;
       parentWindow.addSpectra(this);
   }
   
-  public MainFrame getParentWindow(){
+    /**
+     * Method to get parent window
+     * @return
+     */
+    public MainFrame getParentWindow(){
       return parentWindow;
   }
   
-  public static MainFrame getParentWindowS(){
+    /**
+     * Method to get parent window
+     * @return
+     */
+    public static MainFrame getParentWindowS(){
       return parentWindow;
   }
   
@@ -200,13 +247,23 @@ public final class Spectra {
     return energy <= energyMax;
   }
   
-  // this method sets the energyMin and energyMax
-  public void energyScaling(float minEnergy, float energySlope){
+  // 
+
+    /**
+     * Method to set calibration
+     * @param minEnergy
+     * @param energySlope
+     */
+      public void energyScaling(float minEnergy, float energySlope){
     this.minEnergy=minEnergy;
     this.energySlope=energySlope;
   }
   
-  public boolean isScaled(){
+    /**
+     * Method to know if a spectra is energy scaled
+     * @return
+     */
+    public boolean isScaled(){
     return energySlope!=null;
   }
 
@@ -226,7 +283,12 @@ public final class Spectra {
     return energies;
   }
   
-  public double[] convertFloatsToDoubles(float[] input){
+    /**
+     * Method to convert a table of float to a table of double values
+     * @param input
+     * @return
+     */
+    public double[] convertFloatsToDoubles(float[] input){
     if (input == null){
         return null; 
     }
@@ -237,23 +299,29 @@ public final class Spectra {
     return output;
   }
   
-  public XYPlotSp plotSpectra(String titleWindow, String titleGraph){
-      return plotSpectra(titleWindow, titleGraph,10);
+    /**
+     * Method to plot a spectra
+     * @param titleWindow
+     * @param titleGraph
+     * @return
+     */
+    public FrameSpectra plot(String titleWindow, String titleGraph){
+      return plot(titleWindow, titleGraph,10);
   }
   
   /**
-   * This method creates a new plot using XYPlotSp
-   * @param titleWindow title of the windows where the Spectra will be draw
-   * @param titleGraph title of the component where the Spectra will be draw
+   * This method creates a new plot using FrameSpectra
+   * @param windowTitle title of the windows where the Spectra will be draw
+   * @param graphTitle title of the component where the Spectra will be draw
    * @param nROI the number of selected ROI
-   * @return a frame of the class XYPlotSp, use showVisible to affich
+   * @return a frame of the class FrameSpectra, use showVisible to affich
    */
-  public XYPlotSp plotSpectra(String titleWindow, String titleGraph, int nROI){
+  public FrameSpectra plot(String windowTitle, String graphTitle, int nROI){
     PrefsManager prefs=new PrefsManager();
     if(nROI<=0)nROI=Integer.valueOf(prefs.ijGetValue("IBA.nROI",""+10));
       
     double[] xEnergies = convertFloatsToDoubles(getEnergies());
-    XYPlotSp plot1=new XYPlotSp(this,titleWindow,titleGraph,xEnergies,yields,nROI);
+    FrameSpectra plot1=new FrameSpectra(this,windowTitle,graphTitle,xEnergies,yields,nROI);
     return plot1;
   }
 
@@ -312,24 +380,29 @@ public final class Spectra {
    * @return a chemical element map 
    */
   public GeneratedMap elementMap(float minEnergy,float maxEnergy){
-    if (mapSizeX==0)
-        mapSizeX=searchMax("x")+1;
-    if (mapSizeY==0)
-        mapSizeY=searchMax("y")+1;
+    if (width==0)
+        width=searchMax("x")+1;
+    if (height==0)
+        height=searchMax("y")+1;
     int minIndex= getIndex(minEnergy,false)+minChannel;
     int maxIndex= getIndex(maxEnergy,true)+minChannel;
-    //double[] countPerPixel= new double[(mapSizeX+1)*(mapSizeY+1)];
-    double[] countPerPixel= new double[(mapSizeX)*(mapSizeY)];
+    //double[] countPerPixel= new double[(width+1)*(height+1)];
+    double[] countPerPixel= new double[(width)*(height)];
     for (int i=0;i<adc.getNEvents();i++){
       int[] event=adc.getEvent(i);
       try{
         if (event[2]>=minIndex && event[2]<=maxIndex){
-            //countPerPixel[event[0]-1+(event[1]-1)*(mapSizeX+1)]+=1;
-            countPerPixel[event[0]+(event[1])*(mapSizeX)]+=1;
+            countPerPixel[event[0]-1+(event[1]-1)*(width)]+=1;
+            //countPerPixel[event[0]+(event[1])*(width)]+=1;
+            //countPerPixel[event[0]+(event[1])*(width)]+=1;
         }
-      } catch(Exception e){}
+      } catch(Exception e){
+                IJ.log("** Warning** Event XYE "+event[0] + " " + event[1] + " " + event[2]  +" removed / " + e.toString());
+                int index=event[0]+(event[1])*(width+1);
+                IJ.log("index " + index + "sizeX " + width);
+      }
     }
-    GeneratedMap img= new GeneratedMap(this,countPerPixel,minEnergy,maxEnergy,mapSizeX,mapSizeY);
+    GeneratedMap img= new GeneratedMap(this,countPerPixel,minEnergy,maxEnergy,width,height);
     producedMaps.add(img);
     return img;
   }
@@ -341,20 +414,25 @@ public final class Spectra {
    */
   public GeneratedMap[] elementMaps(float[][] rois){
     
-      if (mapSizeX==0)
+      if (width==0){
         //mapSizeX=searchMax("x")-1;//-1 because here x starts at 1 and for the picture x starts at 0
-        mapSizeX=searchMax("x")+1;
-    if (mapSizeY==0)
+        width=searchMax("x")+1;
+        }
+    if (height==0){
         //mapSizeY=searchMax("y")-1;
-        mapSizeY=searchMax("y")+1;
+        height=searchMax("y")+1;
+        }
+    
     int[][] roiIndex = new int[rois.length][2];
     for(int i=0; i<rois.length;i++){
         roiIndex[i][0]= getIndex(rois[i][0],false)+minChannel;
         roiIndex[i][1]= getIndex(rois[i][1],true)+minChannel;
     }
-    //double[][] countPerPixel= new double[rois.length][(mapSizeX+1)*(mapSizeY+1)];
-    double[][] countPerPixel= new double[rois.length][(mapSizeX)*(mapSizeY)];
-    
+    //double[][] countPerPixel= new double[rois.length][(width+1)*(height+1)];
+    double[][] countPerPixel= new double[rois.length][(width)*(height)];
+     IJ.log("width: " + Integer.toString(width));
+     IJ.log("height: " + Integer.toString(height));
+     
     for (int i=0;i<adc.getNEvents();i++){
       int[] event=adc.getEvent(i);
            
@@ -364,13 +442,14 @@ public final class Spectra {
             
             try{
                 if (event[2]>=minRoiIndex && event[2]<=maxRoiIndex){
-                    //countPerPixel[j][event[0]-1+(event[1]-1)*(mapSizeX+1)]+=1;
-                    countPerPixel[j][event[0]+(event[1])*(mapSizeX)]+=1;
+
+                    //countPerPixel[j][event[0]-1+(event[1]-1)*(width)]+=1;
+                    countPerPixel[j][event[0]+(event[1])*(width)]+=1;
                 }
             } catch (Exception e){
                 IJ.log("** Warning** Event XYE "+event[0] + " " + event[1] + " " + event[2] + " in map " + j +" removed / " + e.toString());
-                int index=event[0]+(event[1])*(mapSizeX+1);
-                IJ.log("index " + index + "sizeX " + mapSizeX);
+                int index=event[0]+(event[1])*(width+1);
+                IJ.log("index " + index + "sizeX " + width);
             }
             
         }
@@ -381,7 +460,7 @@ public final class Spectra {
     for (int i=0; i<rois.length;i++){
         float start = rois[i][0];
         float end = rois[i][1];
-        arrayOfImgGen[i]= new GeneratedMap(this,countPerPixel[i],start,end,mapSizeX,mapSizeY);
+        arrayOfImgGen[i]= new GeneratedMap(this,countPerPixel[i],start,end,width,height);
         producedMaps.add(arrayOfImgGen[i]);
     }
     
@@ -389,7 +468,11 @@ public final class Spectra {
   return arrayOfImgGen;
   }   
   
-   public String getNameToSave(){
+    /**
+     *
+     * @return
+     */
+    public String getNameToSave(){
        return getPath()+".spct.spj";
    }
   
@@ -414,8 +497,8 @@ public final class Spectra {
             else{
                 file.writeFloat(energySlope);
             }
-            file.writeInt(mapSizeX);
-            file.writeInt(mapSizeY);
+            file.writeInt(width);
+            file.writeInt(height);
             adc.saveXYEListFile(file);
         } 
         catch(FileNotFoundException e){
@@ -434,11 +517,12 @@ public final class Spectra {
         }
     }
     
-    
-    
-    
-    
+    /**
+     *
+     * @param strToTranslate
+     * @return
+     */
     public String tr(String strToTranslate){
-        return MainFrame.tr(strToTranslate);
+        return MainFrame.translate(strToTranslate);
     }
 }

@@ -12,6 +12,7 @@ public class FrameConfigSave extends javax.swing.JFrame {
     
     /**
      * Creates a new frame FrameConfigSave
+     * @param IBAJFrame ID for the frame to initialize
      */
     public FrameConfigSave(MainFrame IBAJFrame) {
         initComponents();
@@ -66,12 +67,17 @@ public class FrameConfigSave extends javax.swing.JFrame {
      * This method is called if the corresponding checbox is selected and indicates to the MainFrame the corresponding setting.
      */
     private void saveImgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveImgActionPerformed
-        AbstractButton AB = (AbstractButton) evt.getSource();
-        IBAJFrame.setSaveImg(AB.getModel().isSelected());
+        
+        
     }//GEN-LAST:event_saveImgActionPerformed
     
-    public String tr(String strToTranslate){
-        return IBAJFrame.tr(strToTranslate);
+    /**
+     * Translation of a sentence
+     * @param stringToTranslate 
+     * @return the translated name for the frame
+     */
+    public String tr(String stringToTranslate){
+        return IBAJFrame.translate(stringToTranslate);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -34,9 +34,9 @@ import javax.swing.JTextField;
  */
 public class CustomWindowImage extends StackWindow implements ActionListener,AdjustmentListener{
     
-    private Button buttonRoiCalculation;
-    private JLabel imageName;
-    private JTextField nameRoiField;
+    private Button roiCalculation;
+    private JLabel mapLabel;
+    private JTextField roiName;
     private final GeneratedMap[] stack;
     private RoiManager manager;
     private int X, Y;
@@ -69,19 +69,19 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         if (stack.length>1)
             nbFields=7;
         panel.setLayout(new GridLayout(nbFields,1));
-        nameRoiField = new JTextField();
-        nameRoiField.setText(tr("ROI name"));
-        buttonRoiCalculation = new Button("Calculate ROI spectra");
-        buttonRoiCalculation.addActionListener(this);
-        imageName = new JLabel();
-        imageName.setText(stack[0].getTitle());
-        panel.add(imageName);
+        roiName = new JTextField();
+        roiName.setText(tr("ROI name"));
+        roiCalculation = new Button("Calculate ROI spectra");
+        roiCalculation.addActionListener(this);
+        mapLabel = new JLabel();
+        mapLabel.setText(stack[0].getTitle());
+        panel.add(mapLabel);
         if (stack.length>1){
             panel.add(sliceSelector);
             sliceSelector.addAdjustmentListener(this); 
         }
         panel.add(new Label(""));
-        panel.add(buttonRoiCalculation);
+        panel.add(roiCalculation);
         add(panel);
         pack();  
     }
@@ -95,18 +95,18 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
             z = zSelector.getValue()-1; 
         
         
-        if (b==buttonRoiCalculation) {
-            if (imp.getRoi() !=null) manager.add(imp,imp.getRoi(),manager.getCount()+1);              
+        if (b==roiCalculation) {
+            if (imp.getRoi() ==null) manager.add(imp,imp.getRoi(),manager.getCount()+1);              
             for (int index=0; index<manager.getCount();index++){
                 manager.select(index);
                 IJ.log("calculating spectra from ROI "+manager.getName(index));
                 Spectra roiSpectra=stack[0].roiSpectra();
                 roiSpectra.setFilename(roiSpectra.getPath(manager.getName(index)));
-                roiSpectra.plotSpectra((String)"Spectra from ROI: "+manager.getName(index), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
-                roiSpectra.getADC().saveGupixSpectra(roiSpectra.getPath()+".gup");
-            
-            
-            } 
+                roiSpectra.plot((String)"Spectra from ROI: "+manager.getName(index), (String) tr("Datafile")+" "+roiSpectra.getPath()).showVisible();
+                roiSpectra.getADC().saveGupixSpectra(roiSpectra.getPath()+".gup");       
+                roiSpectra=null;
+            }
+            System.gc();
         }
         
         ImageCanvas imageCanvas = imp.getCanvas();
@@ -118,7 +118,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
     public synchronized void adjustmentValueChanged(AdjustmentEvent adjEv) { 
         int z = zSelector.getValue(); 
         String currentName = stack[z-1].getTitle();
-        imageName.setText(currentName);
+        mapLabel.setText(currentName);
         super.adjustmentValueChanged(adjEv);
     } 
     
@@ -128,7 +128,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
         if(stack.length>1){
             int z = zSelector.getValue()-1; 
             String currentName = stack[z].getTitle();
-            imageName.setText(currentName);
+            mapLabel.setText(currentName);
         }
         updateStatusbarValue();
     }
@@ -229,7 +229,7 @@ public class CustomWindowImage extends StackWindow implements ActionListener,Adj
      * @return the translated sentence
      */
     public String tr(String sentence){
-        return stack[0].tr(sentence);
+        return stack[0].translate(sentence);
     }
     
 } 

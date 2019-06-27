@@ -6,7 +6,7 @@ import java.io.*;
 
 /**
  * This class is used to describe ADC and associated methods
- * ADC basically contains a list of events (an event : x,y,E)
+ * ADC contains a list of events (an event : x,y,E) sorted by time
  */
 
 public class ADC{
@@ -17,12 +17,13 @@ public class ADC{
     private final ArrayList<Integer> median = new ArrayList<>();
     private final ArrayList<Integer> activationPeriods = new ArrayList<>();
     private String path;
-    private final Integer sizeMapX=256;
-    private final Integer sizeMapY=256;
+    private final Integer sizeMapX=1024;
+    private final Integer sizeMapY=1024;
 
     
     /**
-     * ADC constructor with initialization of empty eventList ans median energy for STIM map
+     * ADC constructor with initialization of empty
+     * eventList and median energy for STIM map
      */
     public ADC(){
         eventList.add(new int[3]);
@@ -104,6 +105,7 @@ public class ADC{
     
     /**
      * adds the value of the activation state
+     * @param state active/inactive
      */
      
     public void addPeriod(int state){
@@ -203,7 +205,7 @@ public class ADC{
     
     /**
      * @param event
-     * return Y position for event
+     * @return Y position for event
      */
      public int getY(int event){
             int [] XYE=getEvent(event);
@@ -444,7 +446,7 @@ public class ADC{
                         map.get(index).add((int)getE(i));
                     }
                     catch(Exception e){
-                        IJ.log("**Error** " +e.toString());
+                        IJ.log("**Error during median sorting** " +e.toString());
                     }
                 }
             }

@@ -17,6 +17,7 @@ public class listFiles{
   private String path;
   private int adcIndexScanX;
   private int adcIndexScanY;
+  private int adcRangeX, adcRangeY;
 
 
   //constructors
@@ -69,9 +70,43 @@ public class listFiles{
 	      flag=false;
 	  }
       }
+      
       return flag;
   }
+  
+  
 
+  
+  public void ReadHeader(BufferedReader br, int ADC_X, int ADC_Y) throws Exception {
+    //Reading X range
+    String word="[ADC"+Integer.toString(ADC_X)+"]";
+    String line=br.readLine();
+    while (!line.equals(word)){
+        line=br.readLine();
+    }
+    line=br.readLine();
+    
+    while (!(line.substring(0, 5)).equals("range")){
+        line=br.readLine();
+    }
+    setXRange(Integer.parseInt(line.substring(6)));
+     IJ.log("X range=" +line.substring(6));
+    
+    //Reading Y range
+    word="[ADC"+Integer.toString(ADC_Y)+"]";
+    while (!line.equals(word)){
+        line=br.readLine();
+    }
+    line=br.readLine();
+    
+    while (!(line.substring(0, 5)).equals("range")){
+        line=br.readLine();
+    }
+    setYRange(Integer.parseInt(line.substring(6)));
+     IJ.log("Y range=" +line.substring(6));
+     
+  }
+  
   /**
   * Sorts a list file
   * @param arrayOfActiveADC contains the index of actives/functionning ADCs
@@ -81,9 +116,12 @@ public class listFiles{
 	
         MPA3 mpa=new MPA3();
 	  try{
-		  DataInputStream ips=new DataInputStream(new BufferedInputStream(new FileInputStream(path)));  
-		  while(isReadingHeader(ips)){
-		      
+		  BufferedReader br = new BufferedReader(new FileReader(path));
+                  DataInputStream ips=new DataInputStream(new BufferedInputStream(new FileInputStream(path)));  
+		  ReadHeader(br,adcIndexScanX+1,adcIndexScanY+1);
+                  while(isReadingHeader(ips)){
+		   
+                  //while(isReadingHeader(br)){
                       //TODO : get useful informations from header as date or calibration
 		  }
 		  
@@ -150,13 +188,14 @@ public class listFiles{
 						  //dummy word
 						  if (checkBit(b[0],7)==1) ips.readShort();
 						  int [] evt= new int[16];
+                                                  for (int index=0;index<evt.length;index++) evt[index]=-1;
 						  for (int i=0;i<8;i++){
 							  if (checkBit(b[3],i)==1) evt[i]=safeBytesToInt(ips.readUnsignedByte(),ips.readUnsignedByte());
 						  }
 						  for (int i=0;i<8;i++){
 							  if (checkBit(b[2],i)==1) evt[i+8]=safeBytesToInt(ips.readUnsignedByte(),ips.readUnsignedByte());
 						  }
-                                                  //Skipping n=200 events occuring at the beggining
+                                                  //Skipping n=000 events occuring at the beggining
                                                    if (eventTag>000){
                                                     zevt+=sortEvents(mpa,evt);
                                                   }
@@ -184,11 +223,47 @@ public class listFiles{
   }
 
   //getters
+  /**
+   * 
+   * @return path for this listfile
+   */
   public String getPath(){
 	  return path;
   }
+  /**
+   * Get range for X axis
+   * @return 
+   */
+  public int getRangeX(){
+      return adcRangeX;
+  }
+  /**
+   * Get range for Y axis
+   * @return 
+   */
+  public int getRangeY(){
+      return adcRangeY;
+  }
+  /**
+   * 
+   * @param path to set 
+   */
   public void setPath(String path){
 	  this.path=path;
+  }
+  /**
+   * Set the range for X axis
+   * @param adcRangeX 
+   */
+  public void setXRange (int adcRangeX){
+      this.adcRangeX=adcRangeX;
+  }
+  /**
+   * Set the range for Y axis
+   * @param adcRangeY 
+   */
+    public void setYRange (int adcRangeY){
+      this.adcRangeY=adcRangeY;
   }
   
   /**
@@ -249,17 +324,21 @@ public class listFiles{
                   
                     //Condition to remove defective' channels
                     //if (evt[i]>0 & evt[i]!=192 & evt[i]!=448 & evt[i]!=704 & evt[i]!=3839 & evt[i]!=255 & evt[i]!=512 & evt[i]!=1024 & evt[i]!=4095){
-                          if (evt[i]>0){
+                          if (evt[i]>-1){
                           //if (evt[14]>0 & evt[15]>0){
-                        if (evt[adcIndexScanY]<256 & evt[adcIndexScanX]<256){
+                        if (evt[adcIndexScanY]<getRangeY() & evt[adcIndexScanX]<getRangeX()){
 			  int [] event=new int[3];
 			  //Y value, X value, Energy
-			  event[0]=evt[adcIndexScanX];
-			  event[1]=evt[adcIndexScanY];
+			  event[1]=evt[adcIndexScanX];
+			  event[0]=evt[adcIndexScanY];
 			  event[2]=evt[i];
-			  mpa.getADC(i).addEvent(event);
+			  if (event[2]>0){
+                              mpa.getADC(i).addEvent(event);
+                              ct+=1;
+                          }
+                        
 			  
-			  ct+=1;
+			  
                             //test for extreme values 4095 instead of 1024                          
                             //if (i>7) IJ.log("voie :" + i + " X-Y-E = "+ event[0] +"-"+ event[1]+"-"+ event[2]);
                     }

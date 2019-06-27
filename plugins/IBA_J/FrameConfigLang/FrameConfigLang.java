@@ -21,6 +21,8 @@ public class FrameConfigLang extends javax.swing.JFrame {
     private String languageName;
     /**
      * Creates new form FrameConfigLang
+     * @param parentWindow reference for the main frame
+     * @param languageName specifying the user langage french
      */
     public FrameConfigLang(MainFrame parentWindow, String languageName) {
         this.parentWindow=parentWindow;
@@ -99,7 +101,10 @@ public class FrameConfigLang extends javax.swing.JFrame {
             catch(IOException e){}
         }
     }//GEN-LAST:event_jComboBoxLangActionPerformed
-
+    /**
+     * 
+     * @return the available languages
+     */
     public String[] getLanguages(){
         return parentWindow.getLanguages();
     }

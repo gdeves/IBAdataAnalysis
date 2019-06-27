@@ -18,187 +18,261 @@ import javax.management.InvalidAttributeValueException;
 
 /**
  * Class ImageGenerated handles the data retrieved from spectra
- * in order to generate an image from a spectra portion.
+ * in order to generate an image from a spectra ROI.
  */
 
 public class GeneratedMap {
-  Spectra sourceSpectra;//the parent spectra
-  double[] sourcePixels;//if the user change the imageProc, you can use this array
-  ImageProcessor imageProc;
-  float startSpectra;//an energy of the parent Spectra
-  float endSpectra;
+  Spectra source;//the parent spectra
+  double[] roiPixels;//if the user change the ip, you can use this array
+  ImageProcessor ip;
+  float minROI;
+  float maxROI;
   String title;
-  CustomWindowImage imgWindow=null;//the window where the ImageGenerated will be show to the user
+  CustomWindowImage activeWindow=null;//the window where the ImageGenerated will be shown to the user
   
-  
-  public GeneratedMap(Spectra spectra,double[] countPerPixel,float start, float end,int mapSizeX,int mapSizeY) {
-    sourceSpectra=spectra;
-    sourcePixels=countPerPixel;
-    //imageProc = new FloatProcessor(mapSizeY+1,mapSizeX+1,countPerPixel);
-    imageProc = new FloatProcessor(mapSizeY,mapSizeX,countPerPixel);
-    startSpectra=start;
-    endSpectra=end;
+  /**
+   * generates a stack of element maps
+   * @param spectra
+   * @param countPerPixel
+   * @param start
+   * @param end
+   * @param width
+   * @param height 
+   */
+  public GeneratedMap(Spectra spectra,double[] countPerPixel,float start, float end,int width,int height) {
+    source=spectra;
+    roiPixels=countPerPixel;
+    ip = new FloatProcessor(height,width,countPerPixel);
+    minROI=start;
+    maxROI=end;
   }
   
+  /**
+   * Getter
+   * @return width of maps
+   */
   public int getWidth(){
-      return imageProc.getWidth();
-  }
-          
-  public int getHeight(){
-      return imageProc.getHeight();
+      return ip.getWidth();
   }
   
+  /**
+   * Getter
+   * @return height of the maps
+   */
+  public int getHeight(){
+      return ip.getHeight();
+  }
+  
+  /**
+   * Getter
+   * @return title of the maps
+   */
   public String getTitle(){
       return title;
   }
   
+  /**
+   * Set the title of the maps
+   * @param title 
+   */
   public void setTitle(String title){
       this.title=title;
   }
   
-  public ImageProcessor getImgProcessor(){
-      return imageProc;
+  /**
+   * Getter
+   * @return reference of the image processor
+   */
+  public ImageProcessor getImageProcessor(){
+      return ip;
   }
   
+  /**
+   * Shows the maps
+   * @param title 
+   */
   public void show(String title){
     setTitle(title);
     show();
-  }
-  
-  public void showWithOtherImgs(GeneratedMap[] otherImagesToShow){
-      try{
-        ImageStack imgStack = groupWithOtherImgs(otherImagesToShow);
-        ImagePlus ipOfImageGen = getImagePlus(imgStack);
-        int numberOfImg = otherImagesToShow.length+1;
-        GeneratedMap[] tabOfImgGen = new GeneratedMap[numberOfImg];
-        tabOfImgGen[0]=this;
-        System.arraycopy(otherImagesToShow, 0, tabOfImgGen, 1, otherImagesToShow.length);
-        imgWindow = new CustomWindowImage(ipOfImageGen,tabOfImgGen);
-      }
-      catch(InvalidAttributeValueException e){IJ.log(tr("**Error**" + e.toString()));}
+    
+    
   }
   
   /**
+   * Function to show images
+   * @param imagesToShow 
+   */
+  public void showMaps(GeneratedMap[] imagesToShow){
+      try{
+        ImageStack stack = imageStack(imagesToShow);
+        
+        ImagePlus ipStack = getImagePlus(stack);
+        int size = imagesToShow.length+1;
+        GeneratedMap[] stackedMaps = new GeneratedMap[size];
+        stackedMaps[0]=this;
+        System.arraycopy(imagesToShow, 0, stackedMaps, 1, imagesToShow.length);
+        activeWindow = new CustomWindowImage(ipStack,stackedMaps);
+        
+      }
+      catch(InvalidAttributeValueException e){IJ.log(translate("**Error**" + e.toString()));}
+  }
+  
+  /**
+   * Function to show element maps
    * This method will create a new CustomWindowImage at each call
    */
   public void show(){
-    ImagePlus ipOfImageGen = getImagePlus();
-    GeneratedMap[] tabOfImgGen = new GeneratedMap[1];
-    tabOfImgGen[0]= this;
-    imgWindow = new CustomWindowImage(ipOfImageGen,tabOfImgGen);
-    ImageCanvas icOfImageGen = imgWindow.getCanvas();
-    icOfImageGen.requestFocus();
-  }
-  
-  public ImageStack groupWithOtherImgs(GeneratedMap[] otherImagesToShow) throws InvalidAttributeValueException {
-    int width = getWidth();
-    int height = getHeight();
-    ImageStack imgStack = new ImageStack(width,height);
-    imgStack.addSlice(getTitle(), getImgProcessor());
-    for (GeneratedMap otherImageToShow : otherImagesToShow){
-        if(otherImageToShow.getHeight()!=height || otherImageToShow.getWidth()!=width)
-            throw new InvalidAttributeValueException();
-        imgStack.addSlice(otherImageToShow.getTitle(), otherImageToShow.getImgProcessor());
-    }
-    return imgStack;
-  }
-  
-  public ImagePlus getImagePlus(){
-      if(imgWindow==null){
-        return new ImagePlus(sourceSpectra.getPath()+"_"+title,imageProc);
-      }
-      else
-        return imgWindow.getImagePlus();
-  }
-  
-  public ImagePlus getImagePlus(ImageStack imgStack){
-      return new ImagePlus(sourceSpectra.getPath(),imgStack);
-  }
+    ImagePlus ipMap = getImagePlus();
+    GeneratedMap[] stackedMap = new GeneratedMap[1];
+    stackedMap[0]= this;
+    activeWindow = new CustomWindowImage(ipMap,stackedMap);
+    ImageCanvas icMap = activeWindow.getCanvas();
+    icMap.requestFocus();
     
-  public ImageProcessor getIrregularRoi(){
-    return imgWindow.getImagePlus().getMask();
-  }
-  
-  public Roi getRoi(){
-    return imgWindow.getImagePlus().getRoi();
-  }
-  
-  public String getValueAsString(int x,int y){
-      int resX=getWidth()-1;
-      int position = x+y*(resX+1);
-      return ", nbEvents="+String.valueOf(sourcePixels[position]);
   }
   
   /**
-   * This method creates a new spectra from selected ROI, using the sourceSpectra.
+   * Generates an image stack
+   * @param images to be shown
+   * @return a stack of images to be shown
+   * @throws InvalidAttributeValueException if images have different width or height
+   */
+  public ImageStack imageStack(GeneratedMap[] images) throws InvalidAttributeValueException {
+    int width = getWidth();
+    int height = getHeight();
+    ImageStack stack = new ImageStack(width,height);
+    stack.addSlice(getTitle(), getImageProcessor());
+    for (GeneratedMap showMaps : images){
+        if(showMaps.getHeight()!=height || showMaps.getWidth()!=width)
+            throw new InvalidAttributeValueException();
+        stack.addSlice(showMaps.getTitle(), showMaps.getImageProcessor());
+    }
+    
+    return stack;
+  }
+  
+  /**
+   * Getter
+   * @return IP reference for the active map or create a new IP with same path and title if NULL
+   */
+  public ImagePlus getImagePlus(){
+      if(activeWindow==null){
+        return new ImagePlus(source.getPath()+"_"+title,ip);
+      }
+      else
+        return activeWindow.getImagePlus();
+  }
+  
+  /**
+   * Getter
+   * @param stack 
+   * @return IP reference for the considered stack
+   */
+  public ImagePlus getImagePlus(ImageStack stack){
+      return new ImagePlus(source.getPath(),stack);
+  }
+  
+  /**
+   * Getter
+   * @return the processor for the defined mask
+   */
+  public ImageProcessor getMaskProcessor(){
+    return activeWindow.getImagePlus().getMask();
+  }
+  
+  /**
+   * Getter
+   * @return the considered ROI
+   */
+  public Roi getRoi(){
+    return activeWindow.getImagePlus().getRoi();
+  }
+  
+  /**
+   * Getter
+   * @param x horizontal position on the map
+   * @param y vertical position on the map
+   * @return the yield at the considered (x,y) position
+   */
+  public String getYield(int x,int y){
+      int width=getWidth();
+      int position = x+y*width;
+      return ", nbEvents="+String.valueOf(roiPixels[position]);
+  }
+  
+  /**
+   * This method creates a new spectra from selected ROI, using the source.
    * @return the calculated Spectra or null if no ROI was found
    */
-  public Spectra generateSpectraFromRoi(){
+  public Spectra roiSpectra(){
       Roi ipRoi = getRoi();
       if(ipRoi!=null){
-        ADC adcToCalcFromRoi = new ADC();
-        ADC sourceAdc = sourceSpectra.getADC();
-        for (int nbEvt=0; nbEvt<sourceAdc.getNEvents(); nbEvt++){
-            int[] currentEvt= sourceAdc.getEvent(nbEvt);
-            int xPix = currentEvt[0]-1;
-            int yPix = currentEvt[1]-1;
-            if (ipRoi.contains(xPix,yPix)){
-                  adcToCalcFromRoi.addEvent(currentEvt);
+        ADC roiADC = new ADC();
+        ADC sourceADC = source.getADC();
+        for (int index=0; index<sourceADC.getNEvents(); index++){
+            int[] event= sourceADC.getEvent(index);
+            int x = event[0];
+            int y = event[1];
+            if (ipRoi.contains(x,y)){
+                  roiADC.addEvent(event);
               }
         }   
-        String nameFile=sourceSpectra.getPath();
-        Spectra spectreNewCalc= new Spectra(adcToCalcFromRoi,nameFile,this);
-        spectreNewCalc.setHeritage(true);
-        spectreNewCalc.setParentWindow(sourceSpectra.getParentWindow());
-        return spectreNewCalc;
+        String filename=source.getPath();
+        Spectra calculatedSpectra= new Spectra(roiADC,filename,this);
+        calculatedSpectra.setHeritage(true);
+        calculatedSpectra.setParentWindow(source.getParentWindow());
+        return calculatedSpectra;
       }
       else{
-          IJ.log(tr("**Error** No selection"));
+          IJ.log(translate("**Error** No selection"));
           return null;
       }
   }
   
   /**
-   * @return a name containing the sourceSpectra name, the ImageGen name and the extension of the file to save.
+   * Getter
+   * @return a name containing the source name, the ImageGen name and the extension of the file to save.
    */
-  public String getNameToSave(){
-       return sourceSpectra.getPath()+"_"+getTitle()+".img.spj";
+  public String getFilename(){
+       return source.getPath()+"_"+getTitle()+".img.spj";
   }
   
   /**
    * This method will saved the ImageGenerated and its parent Spectra in the given directory
-   * @param directory  where files have to be saved*/
-  
-  public void save(String directory){
-        DataOutputStream file=null;
-        String nameToSave = getNameToSave();
+   * @param directory  where files have to be saved
+   */
+    public void save(String directory){
+        DataOutputStream os=null;
+        String filename = getFilename();
         try {
-            file = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(directory+nameToSave)));
-            file.writeFloat(startSpectra);
-            file.writeFloat(endSpectra);
-            if( !(sourceSpectra.isSaved() && directory.equals(sourceSpectra.getDirectory())) ){
-                sourceSpectra.save(directory);
+            os = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(directory+filename)));
+            os.writeFloat(minROI);
+            os.writeFloat(maxROI);
+            if( !(source.isSaved() && directory.equals(source.getDirectory())) ){
+                source.save(directory);
             }
         }
         catch (IOException e) {
-            IJ.log(tr("**Error** Saving failed"));
+            IJ.log(translate("**Error** : " +e.toString()));
         }
         finally {
            try {
-               if(file != null) {
-                   file.close();
+               if(os != null) {
+                   os.close();
                }
            } 
            catch (IOException e2) {
-               IJ.log(tr("**Error** Saving failed"));
+               IJ.log(translate("**Error** Saving failed"));
            }
         } 
   }
-   
-         
-  
-  public String tr(String strToTranslate){
-      return sourceSpectra.tr(strToTranslate);
+  /**
+   * Translation tool
+   * @param sentence
+   * @return a translated sentence
+   */   
+  public String translate(String sentence){
+      return source.tr(sentence);
   }
     
 }

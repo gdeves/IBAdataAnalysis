@@ -22,16 +22,23 @@ import java.io.PrintWriter;
 import java.util.Date;
 import javax.swing.JRadioButton;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import IBA_J.Prefs.PrefsManager;
 
-
+/**
+ * class for performing various actions in data conversion
+ * @author deves
+ */
 public class ActionsC{
-  private final Integer sizeMapX=256;
-  private final Integer sizeMapY=256;
+  private final Integer sizeMapX=1024;
+  private final Integer sizeMapY=1024;
 
   ArrayList <listFiles> listFilesArray=new ArrayList <>();
   int [] flags=new int[28];
   ArrayList <double []> pixe_stack=new ArrayList <>();
   ImageStack stimStack=new ImageStack(sizeMapX-2,sizeMapY-1);
+  
+  PrefsManager prefs=new PrefsManager();
 
   /**
   * Constructor for ActionsC class with default initialization of flags and pixe_stack
@@ -76,6 +83,8 @@ public class ActionsC{
                   prefs.setPreference();
                   JFileChooser jF = new JFileChooser();  // a new filechosser is created
                   File myDir=new File(prefs.getLastUsedDirectory());
+                  jF.addChoosableFileFilter(new FileNameExtensionFilter("AIFIRA list file", "lst"));
+                  jF.setFileFilter(jF.getChoosableFileFilters()[1]);
                   jF.setCurrentDirectory(myDir);
                   jF.setApproveButtonText("OK");         // button title
                   jF.setMultiSelectionEnabled(true);
@@ -87,6 +96,7 @@ public class ActionsC{
                                   listFiles lf=new listFiles(f.getAbsolutePath(),getAdcIndexScanX(),getAdcIndexScanY());
                                   listFilesArray.add(lf);
                                   prefs.saveDirectory(f.getAbsolutePath());
+                                  
                           }
                   
           }
@@ -182,7 +192,7 @@ public class ActionsC{
   * @param Yvalues double [4096] array containing values to be plotted
   * @param title Name of the plot window
   */
-  private void plotSpectra(double [] Yvalues, String title){
+  private void plot(double [] Yvalues, String title){
       double [] xValues = new double [4096];
       for (int i=0;i<4096;i++) xValues[i]=i;
       
@@ -201,8 +211,8 @@ public class ActionsC{
           if (flags[27]==1) rbs.saveXYEListFile(lF.setExtension("RBS"), (short)1);
           else if (flags[16]==1) rbs.saveXYEListFile(lF.setExtension("ADC"+Integer.toString(indexOfADC+1)+".rbs2"));
           if (flags[22]==1){
-            String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": RBS - N counts = " +String.valueOf(rbs.getNEvents()); 
-            plotSpectra(rbs.getSpectra(),title);
+            String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": RBS - N counts = " +String.valueOf(rbs.getNEvents()-1); 
+            plot(rbs.getSpectra(),title);
           }
           java.lang.System.gc();
   }
@@ -224,13 +234,13 @@ public class ActionsC{
           if (flags[22]==1){
               if (flags[18]==1){
                   if (indexOfADC==16){
-                      String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": PIXE - N counts = " +String.valueOf(pixe.getNEvents());
-                      plotSpectra(pixe.getSpectra(),title);
+                      String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": PIXE - N counts = " +String.valueOf(pixe.getNEvents()-1);
+                      plot(pixe.getSpectra(),title);
                   }
               }
               else if (flags[17]==1){
-                  String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": PIXE - N counts = " +String.valueOf(pixe.getNEvents());
-                  plotSpectra(pixe.getSpectra(),title);
+                  String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": PIXE - N counts = " +String.valueOf(pixe.getNEvents()-1);
+                  plot(pixe.getSpectra(),title);
               }
           }
           if (flags[24]==1){
@@ -249,24 +259,29 @@ public class ActionsC{
   * @param indexOfADC index of PIXE adc in MPA
   */
   private void processSTIM(ADC adc, listFiles lF, int indexOfADC){
-
+      try{
       if((flags[21]==1)||(flags[25]==1)) adc.medianSort(); //map calculation
-      if (flags[21]==1) adc.saveMedianTextImage(lF.setExtension("medMap.txt")); //saving map
+      if (flags[21]==1) adc.saveMedianTextImage(lF.setExtension("medMap_ADC" +Integer.toString(indexOfADC+1) +".txt")); //saving map
       //if (flags[21]==1) adc.saveMedianImage(lF.setExtension("medMap.txt")); //saving map
       if (flags[25]==1) fillStack(adc,lF); //displaying map
-      if (flags[20]==1) adc.saveCountsSpectra(lF.setExtension("stim.asc")); // save spectra
+      if (flags[20]==1) adc.saveCountsSpectra(lF.setExtension("stim_ADC" +Integer.toString(indexOfADC+1)+".asc")); // save spectra
       //save XYE list file
-      if (flags[27]==1) adc.saveXYEListFile(lF.setExtension("STIM"),(short)2); // save stim
-      else if (flags[16]==1) adc.saveXYEListFile(lF.setExtension("stim2"));
+      if (flags[27]==1) adc.saveXYEListFile(lF.setExtension("_ADC"+Integer.toString(indexOfADC+1)+"STIM"),(short)2); // save stim
+      else if (flags[16]==1) adc.saveXYEListFile(lF.setExtension("_ADC"+Integer.toString(indexOfADC+1)+"stim2"));
       //Output: display spectra
       if (flags[22]==1){
-          String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": STIM - N counts = " +String.valueOf(adc.getNEvents());
-          plotSpectra(adc.getSpectra(),title);
+          String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": STIM - N counts = " +String.valueOf(adc.getNEvents()-1);
+          plot(adc.getSpectra(),title);
       }
+      } catch (Exception e){
+          IJ.log(e.toString());
+      }
+      
       //Prefs ijPrefs=new Prefs();
       //ijPrefs.set(".convertListFiles.lastUsedFile", lf.getPath());
       
       java.lang.System.gc();
+      
   }
   /**
   * This method adds median map to stim stack using
@@ -282,6 +297,7 @@ public class ActionsC{
           }
       }
       stimStack.addSlice(title, ip);
+      
   }
 
   /**
@@ -303,6 +319,7 @@ public class ActionsC{
           }
           if (flags[25]==1){
               try {
+                  
                   ImagePlus imp = new ImagePlus("Median maps", stimStack);
                   ContrastEnhancer ce=new ContrastEnhancer();
                   ce.stretchHistogram(imp, (double)0.35);
@@ -314,6 +331,7 @@ public class ActionsC{
                   }
               }
               catch (Exception e){
+                  IJ.log(e.toString());
               }
               
           }
@@ -327,6 +345,7 @@ public class ActionsC{
   */
   public void processFile(int indexOfFile){
         MPA3 mpa=listFilesArray.get(indexOfFile).readListFile(getActiveADCs());
+        
         boolean debug = true;
         IJ.log("Reading file: "+ listFilesArray.get(indexOfFile).getPath());
         if (debug){
