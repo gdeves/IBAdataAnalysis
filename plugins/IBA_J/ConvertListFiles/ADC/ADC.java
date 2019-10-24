@@ -47,9 +47,14 @@ public class ADC{
     }
     
     private void initializeMedianMap(){
+        try{
         for (int i=0;i<sizeMapX*sizeMapY+1;i++){
             map.add(new ArrayList<Integer>());
             map.get(i).add(0);
+        }
+        }
+        catch (Exception e){
+            IJ.log("**Error in initializing median map " + e.toString());
         }
     }
     
@@ -469,9 +474,9 @@ public class ADC{
             try{
                     PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path)));
 
-                    for (int x=2;x<sizeMapX;x++) {
+                    for (int x=0;x<sizeMapX;x++) {
                             String line="";
-                            for (int y=1;y<sizeMapY;y++){
+                            for (int y=0;y<sizeMapY;y++){
                                     line+=String.valueOf(median.get(x+sizeMapX*y))+" ";
                             }
                             out.println(line);
@@ -479,6 +484,7 @@ public class ADC{
                     out.close();                  
             }
             catch (IOException e){
+                IJ.log("**Error3 in saving median text image " + e.toString());
             }
     }
     /**
@@ -488,10 +494,15 @@ public class ADC{
     public void saveMedianImage(String path){
         ImagePlus imp = new ImagePlus();  
         ImageProcessor ip = imp.getProcessor(); 
-        for (int x=2;x<sizeMapX;x++) {
-            for (int y=1;y<sizeMapY;y++){
+        try{
+        for (int x=0;x<sizeMapX;x++) {
+            for (int y=0;y<sizeMapY;y++){
                 ip.set(x,y,median.get(x+sizeMapX*y));
             }
+        }
+        }
+        catch (Exception e){
+            IJ.log("**Error in saving median image** " + e.toString());
         }
         IJ.saveAs(imp, "TIFF",path);
     }    
