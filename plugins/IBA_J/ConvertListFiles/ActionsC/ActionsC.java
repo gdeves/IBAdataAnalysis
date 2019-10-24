@@ -36,7 +36,7 @@ public class ActionsC{
   ArrayList <listFiles> listFilesArray=new ArrayList <>();
   int [] flags=new int[28];
   ArrayList <double []> pixe_stack=new ArrayList <>();
-  ImageStack stimStack=new ImageStack(sizeMapX-2,sizeMapY-1);
+  ImageStack stimStack=new ImageStack(sizeMapX,sizeMapY);
   
   PrefsManager prefs=new PrefsManager();
 
@@ -289,11 +289,11 @@ public class ActionsC{
   * @param lF name of the file
   */
   private void fillStack(ADC adc,listFiles lF){
-      ImageProcessor ip = new ShortProcessor(sizeMapX-2, sizeMapY-1);  
+      ImageProcessor ip = new ShortProcessor(sizeMapX, sizeMapY);  
       String title = lF.setExtension("");
-      for (int x=2;x<sizeMapX;x++){
-          for (int y=1;y<sizeMapY;y++){
-              ip.set(x-2,y-1,adc.getMedianValue(x, y));
+      for (int x=0;x<sizeMapX;x++){
+          for (int y=0;y<sizeMapY;y++){
+              ip.set(x,y,adc.getMedianValue(x, y));
           }
       }
       stimStack.addSlice(title, ip);
