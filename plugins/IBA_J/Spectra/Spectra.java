@@ -45,6 +45,7 @@ public final class Spectra {
    * @param filename name of the file (ex : "name".pixe (or an other extension) contains the ADC information)
    */
   public Spectra(ADC adc,String filename) {
+    PrefsManager prefs=new PrefsManager();  
     this.producedMaps = new ArrayList<>();
     this.adc=adc;
     this.filename=filename;
@@ -55,13 +56,23 @@ public final class Spectra {
     }
     yields=Arrays.copyOfRange(yields, 0, i+1);
     int nEvents=adc.getNEvents();
+    int maxXsize= 1024;
+    int maxYsize=1024;
     //x=0 or y=0 is ignored with this code
+  
+    if (prefs.getManualROIState()) {
+        maxXsize=prefs.ijGetIntValue(".IBA.roimap.sizeX",1024);
+        maxYsize=prefs.ijGetIntValue(".IBA.roimap.sizeY",1024);
+
+    } 
+    
     for(int j=0;j<nEvents;j++){
-        if(adc.getX(j)<0 || adc.getY(j)<0 || adc.getY(j)>1024 || adc.getX(j)>1024){
+        if(adc.getX(j)<0 || adc.getY(j)<0 || adc.getY(j)>maxYsize || adc.getX(j)>maxXsize ){
             adc.removeEvent(j);
             nEvents--;
         }
     }
+    
   } 
   
   // constructor with an ADC, a float value for lower energy delimiter and
@@ -96,6 +107,7 @@ public final class Spectra {
     //mapSizeY=generatedMap.getHeight()-1;
     width=generatedMap.getWidth();
     height=generatedMap.getHeight();
+    
   }
   
   /**
@@ -113,6 +125,7 @@ public final class Spectra {
     //mapSizeY=gMap.getHeight()-1;
     width=gMap.getWidth();
     height=gMap.getHeight();
+    
   }
   
   @Override
@@ -380,27 +393,33 @@ public final class Spectra {
    * @return a chemical element map 
    */
   public GeneratedMap elementMap(float minEnergy,float maxEnergy){
-    if (width==0)
+    /*
+      if (width==0)
         width=searchMax("x")+1;
+        
+        width=255;
     if (height==0)
         height=searchMax("y")+1;
+        width=255;
+      */
+    width=adc.getMaxX();
+    height=adc.getMaxY();
+    IJ.log("Max X: " +Integer.toString(width));
     int minIndex= getIndex(minEnergy,false)+minChannel;
     int maxIndex= getIndex(maxEnergy,true)+minChannel;
     //double[] countPerPixel= new double[(width+1)*(height+1)];
-    double[] countPerPixel= new double[(width)*(height)];
+    double[] countPerPixel= new double[(width+1)*(height+1)];
     for (int i=0;i<adc.getNEvents();i++){
       int[] event=adc.getEvent(i);
       try{
         if (event[2]>=minIndex && event[2]<=maxIndex){
-            countPerPixel[event[0]-1+(event[1]-1)*(width)]+=1;
-            //countPerPixel[event[0]+(event[1])*(width)]+=1;
+            //countPerPixel[event[0]-1+(event[1]-1)*(width)]+=1;
+            countPerPixel[event[0]+(event[1])*(width)]+=1;
             //countPerPixel[event[0]+(event[1])*(width)]+=1;
         }
       } catch(Exception e){
                 IJ.log("** Warning** Event XYE "+event[0] + " " + event[1] + " " + event[2]  +" removed / " + e.toString());
-                int index=event[0]+(event[1])*(width+1);
-                IJ.log("index " + index + "sizeX " + width);
-      }
+                }
     }
     GeneratedMap img= new GeneratedMap(this,countPerPixel,minEnergy,maxEnergy,width,height);
     producedMaps.add(img);
@@ -413,23 +432,27 @@ public final class Spectra {
    * @return a table containing all calculated maps
    */
   public GeneratedMap[] elementMaps(float[][] rois){
-    
+    /*
       if (width==0){
         //mapSizeX=searchMax("x")-1;//-1 because here x starts at 1 and for the picture x starts at 0
         width=searchMax("x")+1;
+        width=255;
         }
     if (height==0){
         //mapSizeY=searchMax("y")-1;
         height=searchMax("y")+1;
+        height=255;
         }
-    
+    */
+    width=adc.getMaxX();
+    height=adc.getMaxY();
     int[][] roiIndex = new int[rois.length][2];
     for(int i=0; i<rois.length;i++){
         roiIndex[i][0]= getIndex(rois[i][0],false)+minChannel;
         roiIndex[i][1]= getIndex(rois[i][1],true)+minChannel;
     }
     //double[][] countPerPixel= new double[rois.length][(width+1)*(height+1)];
-    double[][] countPerPixel= new double[rois.length][(width)*(height)];
+    double[][] countPerPixel= new double[rois.length][(width+1)*(height+1)];
      IJ.log("width: " + Integer.toString(width));
      IJ.log("height: " + Integer.toString(height));
      
@@ -444,12 +467,10 @@ public final class Spectra {
                 if (event[2]>=minRoiIndex && event[2]<=maxRoiIndex){
 
                     //countPerPixel[j][event[0]-1+(event[1]-1)*(width)]+=1;
-                    countPerPixel[j][event[0]+(event[1])*(width)]+=1;
+                    countPerPixel[j][event[0]+(event[1])*(width+1)]+=1;
                 }
             } catch (Exception e){
                 IJ.log("** Warning** Event XYE "+event[0] + " " + event[1] + " " + event[2] + " in map " + j +" removed / " + e.toString());
-                int index=event[0]+(event[1])*(width+1);
-                IJ.log("index " + index + "sizeX " + width);
             }
             
         }
@@ -460,7 +481,7 @@ public final class Spectra {
     for (int i=0; i<rois.length;i++){
         float start = rois[i][0];
         float end = rois[i][1];
-        arrayOfImgGen[i]= new GeneratedMap(this,countPerPixel[i],start,end,width,height);
+        arrayOfImgGen[i]= new GeneratedMap(this,countPerPixel[i],start,end,width+1,height+1);
         producedMaps.add(arrayOfImgGen[i]);
     }
     
