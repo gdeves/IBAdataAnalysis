@@ -88,7 +88,7 @@ public final class MainFrame extends javax.swing.JFrame {
         jMenu_about = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("IBA analysis - v2019-07-26");
+        setTitle("IBA analysis - v2020.10.08");
 
         jButtonOpenLst.setText(translate("Handle raw listfiles"));
         jButtonOpenLst.addActionListener(new java.awt.event.ActionListener() {
@@ -453,6 +453,7 @@ public final class MainFrame extends javax.swing.JFrame {
           JFileChooser jF = new JFileChooser();
           File myDir=new File(prefs.ijGetLastUsedDirectory());
           jF.addChoosableFileFilter(new FileNameExtensionFilter("PIXE AIFIRA file", "pixe2"));
+          jF.addChoosableFileFilter(new FileNameExtensionFilter("STIM AIFIRA file", "stim2"));
           jF.addChoosableFileFilter(new FileNameExtensionFilter("RBS AIFIRA file", "rbs2"));
           jF.setFileFilter(jF.getChoosableFileFilters()[1]);
 
