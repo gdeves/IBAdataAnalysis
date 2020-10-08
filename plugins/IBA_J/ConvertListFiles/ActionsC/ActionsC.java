@@ -12,6 +12,7 @@ import ij.*;
 import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
 import ij.process.ImageProcessor;
+import ij.process.StackProcessor;
 import ij.process.ShortProcessor;
 import java.awt.Component;
 import java.awt.HeadlessException;
@@ -30,8 +31,8 @@ import IBA_J.Prefs.PrefsManager;
  * @author deves
  */
 public class ActionsC{
-  private final Integer sizeMapX=1024;
-  private final Integer sizeMapY=1024;
+  int sizeMapX=1;
+  int sizeMapY=1;
 
   ArrayList <listFiles> listFilesArray=new ArrayList <>();
   int [] flags=new int[28];
@@ -267,7 +268,7 @@ public class ActionsC{
       if (flags[20]==1) adc.saveCountsSpectra(lF.setExtension("stim_ADC" +Integer.toString(indexOfADC+1)+".asc")); // save spectra
       //save XYE list file
       if (flags[27]==1) adc.saveXYEListFile(lF.setExtension("_ADC"+Integer.toString(indexOfADC+1)+"STIM"),(short)2); // save stim
-      else if (flags[16]==1) adc.saveXYEListFile(lF.setExtension("_ADC"+Integer.toString(indexOfADC+1)+"stim2"));
+      else if (flags[16]==1) adc.saveXYEListFile(lF.setExtension("_ADC"+Integer.toString(indexOfADC+1)+".stim2"));
       //Output: display spectra
       if (flags[22]==1){
           String title=lF.getPath()+" ADC: "+String.valueOf(indexOfADC+1)+": STIM - N counts = " +String.valueOf(adc.getNEvents()-1);
@@ -289,7 +290,15 @@ public class ActionsC{
   * @param lF name of the file
   */
   private void fillStack(ADC adc,listFiles lF){
-      ImageProcessor ip = new ShortProcessor(sizeMapX, sizeMapY);  
+      //searching for the maximum size of X and Y in adc
+      this.sizeMapX=adc.getMaxX();
+      this.sizeMapY=adc.getMaxY();
+      
+      //Creation of a map with above size and resizing existing stack created at the instanciation of ActionC
+      ImageProcessor ip = new ShortProcessor(sizeMapX+1, sizeMapY+1);
+      StackProcessor stakProc = new StackProcessor(stimStack,ip);
+      stimStack=stakProc.resize(sizeMapX+1,sizeMapY+1);
+      
       String title = lF.setExtension("");
       for (int x=0;x<sizeMapX;x++){
           for (int y=0;y<sizeMapY;y++){
