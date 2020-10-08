@@ -178,6 +178,13 @@ public class PrefsManager {
       return ijPrefs.get("IBA.LAST_USED_DIR", System.getProperty("user.dir"));
   }
   /**
+   * Method to retrieve the mode to build roi map, eg. using manual X,Y limits
+   * @return 
+   */
+    public boolean getManualROIState(){
+      return ijGetBoolValue(".IBA.roimap.manualEnabled",false);
+  }
+  /**
    * Method to retrieve the specified ROI field state
    * @param roi
    * @return 
