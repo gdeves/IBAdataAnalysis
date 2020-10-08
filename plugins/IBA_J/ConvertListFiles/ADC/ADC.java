@@ -451,7 +451,7 @@ public class ADC{
                         map.get(index).add((int)getE(i));
                     }
                     catch(Exception e){
-                        IJ.log("**Error during median sorting** " +e.toString());
+                        IJ.log("**Error during median sorting** " +e.toString()+";X= "+getX(i)+ "; Y="+getY(i));
                     }
                 }
             }
