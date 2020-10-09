@@ -27,7 +27,12 @@ public class PrefsManager {
      prefs = Preferences.userRoot().node(this.getClass().getName());
   }
   //Setters
-  
+  /**
+   * Saving preferences now
+   */
+  public void savePrefsNow(){
+      Prefs.savePreferences();
+  }
   /**
    * Method to save a string value to preferences file
    * @param key
@@ -62,6 +67,37 @@ public class PrefsManager {
   public void saveLastUsedFile(String value){
       prefs.put("LAST_USED_FILE",value);
   }
+  /**
+   * savinf min roi in prefs file
+   * @param min
+   * @param nRoi 
+   */
+  public void saveRoiMin(String min, int nRoi){
+      String key="IBA.roi"+Integer.toString(nRoi)+".min";
+      ijPrefsSaveValue(key,min);
+       }
+  /**
+   * Saving roi max in prefs
+   * @param max
+   * @param nRoi 
+   */
+  public void saveRoiMax(String max, int nRoi){
+      String key="IBA.roi"+Integer.toString(nRoi)+".max";
+      ijPrefsSaveValue(key,max);
+       }
+  /**
+   * Saving roi name in prefs
+   * @param name
+   * @param nRoi 
+   */
+  public void saveRoiName(String name, int nRoi){
+      String key="IBA.roi"+Integer.toString(nRoi)+".name";
+      ijPrefsSaveValue(key,name);
+       }
+    public void saveRoiState(String state, int nRoi){
+      String key="IBA.roi"+Integer.toString(nRoi)+".isActive";
+      ijPrefsSaveValue(key,state);
+       }
   /**
    * Method to modify a String value to preferences file
    * @param key
