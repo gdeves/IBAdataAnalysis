@@ -431,26 +431,26 @@ translate("Events number"),              // y axis label
         // number of checkboxes = vectButtonsSupp.size()
         // the whole is taken if JComp[0] is selected and 1,2 et 3 are corrects
         try {
-            GeneratedMap[] tabImgGenFromSpectra;
-            Vector vectValues = getValuesMinMaxNames(false,true,true);
-            ArrayList<String> nameOfImgGen = (ArrayList<String>) vectValues.get(0);
-            ArrayList<float[]> minMaxSpectra = (ArrayList<float[]>) vectValues.get(1);
-            float[][] minMaxSpectraArray = minMaxSpectra.toArray(new float[minMaxSpectra.size()][2]);
-            if(minMaxSpectraArray.length>0){
-                tabImgGenFromSpectra = spectra.elementMaps(minMaxSpectraArray);
-                GeneratedMap imgToShow=tabImgGenFromSpectra[0];
-                imgToShow.setTitle(nameOfImgGen.get(0));
-                int nbOfOtherImg=tabImgGenFromSpectra.length-1;
-                if(nbOfOtherImg>0){//check if more than one image to show
-                    GeneratedMap[] tabOtherImgToShow = new GeneratedMap[nbOfOtherImg];
-                    for (int i=0;i<nbOfOtherImg;i++){
-                        tabOtherImgToShow[i]=tabImgGenFromSpectra[i+1];
-                        tabOtherImgToShow[i].setTitle(nameOfImgGen.get(i+1));
+            GeneratedMap[] roiMap;
+            Vector roiProperties = getRoiProperties(false,true,true);
+            ArrayList<String> mapNames = (ArrayList<String>) roiProperties.get(0);
+            ArrayList<float[]> roiLimits = (ArrayList<float[]>) roiProperties.get(1);
+            float[][] roiLimitsArray = roiLimits.toArray(new float[roiLimits.size()][2]);
+            if(roiLimitsArray.length>0){
+                roiMap = spectra.elementMaps(roiLimitsArray);
+                GeneratedMap defaultsMap=roiMap[0];
+                defaultsMap.setTitle(mapNames.get(0));
+                int stackSize=roiMap.length-1;
+                if(stackSize>0){//check if more than one image to show
+                    GeneratedMap[] mapStack = new GeneratedMap[stackSize];
+                    for (int i=0;i<stackSize;i++){
+                        mapStack[i]=roiMap[i+1];
+                        mapStack[i].setTitle(mapNames.get(i+1));
                     }
-                    imgToShow.showMaps(tabOtherImgToShow);
+                    defaultsMap.showMaps(mapStack);
                 }
                 else{
-                    imgToShow.show();
+                    defaultsMap.show();
                 }
             }
         }
@@ -497,9 +497,9 @@ translate("Events number"),              // y axis label
      * @param showError
      * @return a vector containing the arraylist of the names and the arraylist of the [min,max]
      */
-    public Vector getValuesMinMaxNames(boolean minOrMax, boolean nameIsImportant, boolean showError){
-        ArrayList<String> nameOfImgGen = new ArrayList<>();
-        ArrayList<float[]> minMaxSpectra = new ArrayList<>();
+    public Vector getRoiProperties(boolean minOrMax, boolean nameIsImportant, boolean showError){
+        ArrayList<String> roiNames = new ArrayList<>();
+        ArrayList<float[]> roiLimits = new ArrayList<>();
         boolean errorShowed1=false, errorShowed2=false, errorShowed3=false, errorShowed4=false;
         for (Object vectButtonsSupp1 : vectButtonsSupp) {
             JComponent[] tabJCompToCheck = (JComponent[]) vectButtonsSupp1;
@@ -535,13 +535,13 @@ translate("Events number"),              // y axis label
                                         int length = spectra.getEnergies().length;
                                         end=spectra.getEnergies()[length-1];
                                     }
-                                    if( !nameIsImportant || !nameOfImgGen.contains(name.getText()) ){//useful to avoid saving problems
+                                    if( !nameIsImportant || !roiNames.contains(name.getText()) ){//useful to avoid saving problems
                                         if( !nameIsImportant || !(name.getText().contains("_")) ){//useful to avoid restoring problems
-                                            nameOfImgGen.add(name.getText());
+                                            roiNames.add(name.getText());
                                             float[] tabMinMax = new float[2];
                                             tabMinMax[0]=start;
                                             tabMinMax[1]=end;
-                                            minMaxSpectra.add(tabMinMax);
+                                            roiLimits.add(tabMinMax);
                                         }
                                         else{
                                             if(showError && !errorShowed1 && !errorShowed2){
@@ -552,7 +552,7 @@ translate("Events number"),              // y axis label
                                     }
                                     else{
                                         if(showError && !errorShowed1 && !errorShowed2 && !errorShowed3){
-                                            IJ.error(translate("Give different title for each picture please"));
+                                            IJ.error(translate("Give different name for roi please"));
                                             errorShowed3=true;
                                         }
                                     }
@@ -569,10 +569,34 @@ translate("Events number"),              // y axis label
                 }
             }
         }
-        Vector vectToReturn = new Vector();
-        vectToReturn.add(nameOfImgGen);
-        vectToReturn.add(minMaxSpectra);
-        return vectToReturn;
+        Vector returnValues = new Vector();
+        returnValues.add(roiNames);
+        returnValues.add(roiLimits);
+        return returnValues;
+    }
+    public ArrayList <String> getAllProperties(){
+        ArrayList<String> properties = new ArrayList<>();
+
+        for (Object vectButtonsSupp1 : vectButtonsSupp) {
+            JComponent[] tabJCompToCheck = (JComponent[]) vectButtonsSupp1;
+            JCheckBox checkBoxCurrent = (JCheckBox) tabJCompToCheck[0];
+            //Writing state of check box (true vs false)
+            if(checkBoxCurrent.isSelected()) properties.add("true");
+            else properties.add("false");
+            JTextField name= (JTextField) tabJCompToCheck[1];
+            JTextField min= (JTextField) tabJCompToCheck[2];
+            JTextField max=(JTextField) tabJCompToCheck[3];
+            //Writing roi name
+            properties.add(name.getText());
+            //Writing min value
+            int start=Integer.valueOf(min.getText());
+            properties.add(min.getText());
+            //Writing max value
+            int end=Integer.valueOf(max.getText());
+            properties.add(max.getText());
+            
+        }                                                                               
+        return properties;
     }
     
     private String selectDirectory(){
@@ -612,11 +636,18 @@ translate("Events number"),              // y axis label
     }
     
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        //String directory=selectDirectory();
-        //if(directory!=null){
-        //    spectra.save(directory);
-        //}
         PrefsManager prefs=new PrefsManager();
+        ArrayList<String> roiProperties = getAllProperties();
+        int nRoi=1;
+        for (int index=0;index<roiProperties.size();index+=4){
+            IJ.log(roiProperties.get(index)+ " " + roiProperties.get(index+1)+ " " +roiProperties.get(index+2)+ " " +roiProperties.get(index+3) );
+            prefs.saveRoiState(roiProperties.get(index),nRoi);
+            prefs.saveRoiName(roiProperties.get(index+1),nRoi);
+            prefs.saveRoiMin(roiProperties.get(index+2),nRoi);
+            prefs.saveRoiMax(roiProperties.get(index+3),nRoi);
+            nRoi+=1;
+        }       
+        prefs.savePrefsNow();
         
     }
     

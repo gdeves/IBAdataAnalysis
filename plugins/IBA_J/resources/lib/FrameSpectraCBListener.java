@@ -159,7 +159,7 @@ public class FrameSpectraCBListener implements ItemListener,DocumentListener{
         boolean isPresent = false;
         int indexIsPresent=-1;
         if (checkBoxsSelected.size()>0){//so other box are selected
-            Vector vectValues = sourceFrame.getValuesMinMaxNames(true,false,false);
+            Vector vectValues = sourceFrame.getRoiProperties(true,false,false);
             ArrayList<float[]> minMaxSpectra = (ArrayList<float[]>) vectValues.get(1);
             for(int i=0;i<minMaxSpectra.size();i++){
                 boolean isEqual1 = Float.compare(position,minMaxSpectra.get(i)[0])==0;
