@@ -126,9 +126,9 @@ public class listFiles{
   public void readRanges(Scanner sc) throws Exception {
     //Reading 16 ranges
     
-    for (int index =1; index<17;index++){
+    for (int index=0; index<16;index++){
         
-        String word="[ADC"+Integer.toString(index)+"]";
+        String word="[ADC"+Integer.toString(index+1)+"]";
         String line=sc.nextLine();
         while (!line.equals(word)){
             line=sc.nextLine();
@@ -138,6 +138,7 @@ public class listFiles{
         while (!(line.substring(0, 5)).equals("range")){
          line=sc.nextLine();
         }
+        
         setRange(index,Integer.parseInt(line.substring(6)));
         
     }
@@ -157,8 +158,8 @@ public class listFiles{
                   Scanner headerScanner = new Scanner(f);
 		  readRanges(headerScanner);
                   headerScanner.close();
-                  setXRange(ranges[adcIndexScanX+1]);
-                  setYRange(ranges[adcIndexScanY+1]);
+                  setXRange(ranges[adcIndexScanX]);
+                  setYRange(ranges[adcIndexScanY]);
                   
                   DataInputStream ips=new DataInputStream(new BufferedInputStream(new FileInputStream(path)));
                   //ReadHeader(br,adcIndexScanX+1,adcIndexScanY+1);
